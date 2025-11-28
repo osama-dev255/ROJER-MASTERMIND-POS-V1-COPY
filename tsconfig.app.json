@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "noFallthroughCasesInSwitch": false,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["./src/types", "./node_modules/@types"]
+  },
+  "include": ["src"],
+  "exclude": [
+    "src/utils/printUtils.backup.ts",
+    "src/utils/printUtils.backup2.ts",
+    "src/utils/printUtils.final.ts",
+    "src/utils/printUtils.mobile_preview.ts",
+    "src/utils/printUtils.ts.backup",
+    "src/utils/fix_corrupted_section.py",
+    "src/utils/fix_print_utils.py"
+  ]
+}
