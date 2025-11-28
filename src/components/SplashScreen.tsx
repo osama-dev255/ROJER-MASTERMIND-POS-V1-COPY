@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Store, CreditCard, BarChart3, Users, Box } from "lucide-react";
 import "../App.css";
 
 export const SplashScreen = () => {
@@ -21,43 +21,58 @@ export const SplashScreen = () => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-background to-primary/10 flex items-center justify-center splash-screen">
-      <div className="text-center">
+    <div className="fixed inset-0 bg-gradient-to-br from-background to-primary/5 flex items-center justify-center splash-screen">
+      <div className="text-center max-w-md w-full px-4">
         <div className="mb-8 relative">
-          <div className="absolute -inset-4 bg-primary/20 rounded-full blur-lg animate-pulse"></div>
-          <div className="relative bg-primary rounded-full p-6 shadow-lg">
-            <ShoppingCart className="h-16 w-16 text-white" />
+          <div className="absolute -inset-2 bg-primary/10 rounded-xl blur-lg"></div>
+          <div className="relative bg-white rounded-xl p-6 shadow-lg border border-primary/10">
+            <Store className="h-16 w-16 text-primary mx-auto" />
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold mb-3 text-foreground splash-fade-in">
-          Kilango Group Food Suppliers & General 🫱🏽‍🫲🏻
+        <h1 className="text-3xl md:text-4xl font-bold mb-2 text-foreground splash-fade-in">
+          Rojer MasterMind POS
         </h1>
 
-        <div className="w-24 h-1 bg-primary mx-auto mb-6 splash-fade-in"></div>
-
-        <p className="text-lg md:text-xl mb-8 text-muted-foreground splash-fade-in">
-          Biashara kidigitaly 💫
+        <p className="text-sm md:text-base mb-6 text-muted-foreground splash-fade-in">
+          Professional Point of Sale System
         </p>
 
-        <div className="flex justify-center space-x-4 mb-8">
-          <div className="flex space-x-2">
-            {["Inventory", "Sales", "Analytics"].map((text, index) => (
-              <div
-                key={index}
-                className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium splash-fade-in"
-                style={{ animationDelay: `${0.8 + index * 0.1}s` }}
-              >
-                {text}
-              </div>
-            ))}
+        <div className="w-16 h-0.5 bg-primary mx-auto mb-6 splash-fade-in"></div>
+
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="flex flex-col items-center">
+            <div className="bg-primary/10 p-3 rounded-lg mb-2">
+              <CreditCard className="h-5 w-5 text-primary" />
+            </div>
+            <span className="text-xs text-muted-foreground">Sales</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="bg-primary/10 p-3 rounded-lg mb-2">
+              <Box className="h-5 w-5 text-primary" />
+            </div>
+            <span className="text-xs text-muted-foreground">Inventory</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="bg-primary/10 p-3 rounded-lg mb-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+            </div>
+            <span className="text-xs text-muted-foreground">Reports</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-center space-x-2">
-          <div className="h-2 w-2 bg-primary rounded-full animate-bounce"></div>
-          <div className="h-2 w-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-          <div className="h-2 w-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+        <div className="mb-6">
+          <div className="w-full bg-muted rounded-full h-1.5 mb-2">
+            <div 
+              className="bg-primary h-1.5 rounded-full splash-progress" 
+              style={{ width: '0%' }}
+            ></div>
+          </div>
+          <p className="text-xs text-muted-foreground">Loading system...</p>
+        </div>
+
+        <div className="text-xs text-muted-foreground">
+          <p>Version 1.0.0</p>
         </div>
       </div>
     </div>
