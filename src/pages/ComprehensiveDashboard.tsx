@@ -5,7 +5,8 @@ import {
   Package,
   Truck,
   Wallet,
-  Users
+  Users,
+  FileText
 } from "lucide-react";
 
 interface ComprehensiveDashboardProps {
@@ -49,6 +50,13 @@ export const ComprehensiveDashboard = ({ username, onNavigate, onLogout }: Compr
       title: "Employee Management",
       description: "Manage staff members and permissions",
       icon: Users,
+      color: "bg-white border border-gray-200"
+    },
+    {
+      id: "templates",
+      title: "Business Templates",
+      description: "Generate and print business templates: Delivery notes, contracts, orders, and more",
+      icon: FileText,
       color: "bg-white border border-gray-200"
     }
   ];

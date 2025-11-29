@@ -36,6 +36,7 @@ import { FinanceDashboard } from '@/pages/FinanceDashboard';
 import { SalesCart } from '@/pages/SalesCart';
 import { SalesOrders } from '@/pages/SalesOrders';
 import { TestSalesOrders } from '@/pages/TestSalesOrders';
+import { BusinessTemplates } from '@/pages/BusinessTemplates';
 
 // Define the possible view states
 export type ViewState = 
@@ -71,7 +72,8 @@ export type ViewState =
   | "settings"
   | "automated"
   | "finance"
-  | "scanner";
+  | "scanner"
+  | "templates";
 
 interface IndexProps {
   initialView?: ViewState;
@@ -218,6 +220,9 @@ const Index: React.FC<IndexProps> = ({ initialView = "comprehensive", onLogout }
         break;
       case "purchase":
         setCurrentView("dashboard");
+        break;
+      case "templates":
+        setCurrentView("comprehensive");
         break;
       default:
         setCurrentView("dashboard");
@@ -803,6 +808,15 @@ const Index: React.FC<IndexProps> = ({ initialView = "comprehensive", onLogout }
                 onBack={handleBack}
                 onLogout={handleLogout}
                 autoOpenScanner={true}
+              />
+            );
+          case "templates":
+            console.log("Rendering BusinessTemplates");
+            return (
+              <BusinessTemplates
+                username={user?.email || "admin"}
+                onBack={handleBack}
+                onLogout={handleLogout}
               />
             );
           default:

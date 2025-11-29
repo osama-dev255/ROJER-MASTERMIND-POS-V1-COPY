@@ -16,6 +16,7 @@ import { TestQRCode } from "./pages/TestQRCode";
 import { TestReceiptQR } from "./pages/TestReceiptQR";
 import { QRDebugTest } from "./pages/QRDebugTest";
 import QRTestPage from "./pages/QRTestPage";
+import { BusinessTemplates } from "./pages/BusinessTemplates";
 import { useEffect } from "react";
 // Import authentication context
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -79,6 +80,7 @@ const App = () => {
                 <Route path="/sales/orders" element={<SalesOrders username="admin" onBack={() => {}} onLogout={() => {}} />} />
                 <Route path="/test/sales-orders" element={<TestSalesOrders username="admin" onBack={() => {}} onLogout={() => {}} />} />
                 <Route path="/purchase/terminal" element={<PurchaseTerminal username="admin" onBack={() => {}} onLogout={() => {}} />} />
+                <Route path="/templates" element={<BusinessTemplates username="admin" onBack={() => {}} onLogout={() => {}} />} />
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/test/qr" element={<TestQRCode />} />
                 <Route path="/test/receipt-qr" element={<TestReceiptQR />} />
