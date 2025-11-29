@@ -103,15 +103,11 @@ When deploying to Netlify, make sure to set the following environment variables 
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/9f9e30d6-d3f0-4c0d-990f-ab3b9f33d598
-
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
 **Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/9f9e30d6-d3f0-4c0d-990f-ab3b9f33d598) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
@@ -167,8 +163,6 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/9f9e30d6-d3f0-4c0d-990f-ab3b9f33d598) and click on Share -> Publish.
-
 Alternatively, you can deploy manually using services like:
 - Vercel
 - Netlify
@@ -180,8 +174,6 @@ Alternatively, you can deploy manually using services like:
 Yes, you can!
 
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
 
 ## Future Enhancements
 
