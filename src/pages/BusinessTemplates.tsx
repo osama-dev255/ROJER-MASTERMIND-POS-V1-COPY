@@ -319,6 +319,31 @@ interface SalarySlipData {
   authorizedSignatory: string;
 }
 
+interface ComplimentaryGoodsData {
+  businessName: string;
+  businessAddress: string;
+  businessPhone: string;
+  businessEmail: string;
+  currentDate: string;
+  recipientName: string;
+  recipientAddress: string;
+  recipientPhone: string;
+  recipientEmail: string;
+  complimentaryNoteTitle: string;
+  items: Array<{
+    description: string;
+    quantity: string;
+    remarks: string;
+  }>;
+  totalItems: string;
+  purpose: string;
+  preparedByName: string;
+  preparedByTitle: string;
+  approvedByName: string;
+  approvedByTitle: string;
+  notes: string;
+}
+
 export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTemplatesProps) => {
   const { toast } = useToast();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -648,6 +673,31 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
     paymentMode: "Bank Transfer",
     preparedBy: "HR Department",
     authorizedSignatory: "Managing Director"
+  });
+
+  // Form data state for complimentary goods template
+  const [complimentaryGoodsData, setComplimentaryGoodsData] = useState<ComplimentaryGoodsData>({
+    businessName: "YOUR BUSINESS NAME",
+    businessAddress: "123 Business Street, City, State 12345",
+    businessPhone: "(555) 123-4567",
+    businessEmail: "info@yourbusiness.com",
+    currentDate: new Date().toLocaleDateString(),
+    recipientName: "Valued Customer",
+    recipientAddress: "456 Customer Avenue, City, State 67890",
+    recipientPhone: "(555) 987-6543",
+    recipientEmail: "customer@example.com",
+    complimentaryNoteTitle: "COMPLIMENTARY GOODS NOTE",
+    items: [
+      { description: "Sample Product 1", quantity: "2", remarks: "Promotional item" },
+      { description: "Sample Product 2", quantity: "1", remarks: "Free sample" }
+    ],
+    totalItems: "3",
+    purpose: "Customer appreciation and product promotion",
+    preparedByName: "John Doe",
+    preparedByTitle: "Sales Manager",
+    approvedByName: "Jane Smith",
+    approvedByTitle: "Operations Director",
+    notes: "Thank you for your business. We appreciate your continued support."
   });
 
   // Handle invoice form changes
@@ -1127,6 +1177,37 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
     });
   };
 
+  // Handle complimentary goods form changes
+  const handleComplimentaryGoodsChange = <K extends keyof ComplimentaryGoodsData>(field: K, value: ComplimentaryGoodsData[K]) => {
+    setComplimentaryGoodsData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle complimentary goods items changes
+  const handleComplimentaryGoodsItemChange = (index: number, field: string, value: string) => {
+    setComplimentaryGoodsData(prev => {
+      const newItems = [...prev.items];
+      newItems[index] = { ...newItems[index], [field]: value };
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Add complimentary goods item
+  const addComplimentaryGoodsItem = () => {
+    setComplimentaryGoodsData(prev => ({
+      ...prev,
+      items: [...prev.items, { description: "", quantity: "", remarks: "" }]
+    }));
+  };
+
+  // Remove complimentary goods item
+  const removeComplimentaryGoodsItem = (index: number) => {
+    setComplimentaryGoodsData(prev => {
+      const newItems = [...prev.items];
+      newItems.splice(index, 1);
+      return { ...prev, items: newItems };
+    });
+  };
+
   const templates: Template[] = [
     {
       id: "delivery",
@@ -1181,6 +1262,12 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
       name: "Salary Slip",
       description: "Employee salary slip template",
       icon: FileSpreadsheet
+    },
+    {
+      id: "complimentary",
+      name: "Complimentary Goods",
+      description: "Professional complimentary goods template",
+      icon: FileText
     }
   ];
 
@@ -3705,6 +3792,184 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             <div className="mt-8 pt-4 border-t border-gray-300 text-center text-xs text-gray-500">
               <p>This is a computer-generated document and does not require a signature.</p>
               <p className="mt-1">For any queries regarding this payslip, please contact the HR department.</p>
+            </div>
+          </div>
+        );
+      case "complimentary":
+        return (
+          <div className="p-8 max-w-2xl mx-auto bg-white">
+            <div className="text-center mb-8 border-b-2 border-gray-800 pb-4">
+              <Input 
+                className="text-3xl font-bold text-gray-800 w-full text-center" 
+                value={complimentaryGoodsData.complimentaryNoteTitle} 
+                onChange={(e) => handleComplimentaryGoodsChange('complimentaryNoteTitle', e.target.value)} 
+              />
+              <div className="mt-2 text-gray-600">
+                <Input 
+                  className="w-full text-center" 
+                  value={complimentaryGoodsData.businessName} 
+                  onChange={(e) => handleComplimentaryGoodsChange('businessName', e.target.value)} 
+                />
+                <Input 
+                  className="w-full text-center" 
+                  value={complimentaryGoodsData.businessAddress} 
+                  onChange={(e) => handleComplimentaryGoodsChange('businessAddress', e.target.value)} 
+                />
+                <Input 
+                  className="w-full text-center" 
+                  value={complimentaryGoodsData.businessPhone} 
+                  onChange={(e) => handleComplimentaryGoodsChange('businessPhone', e.target.value)} 
+                />
+                <Input 
+                  className="w-full text-center" 
+                  value={complimentaryGoodsData.businessEmail} 
+                  onChange={(e) => handleComplimentaryGoodsChange('businessEmail', e.target.value)} 
+                />
+              </div>
+            </div>
+            
+            <div className="mb-6 flex justify-between">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">To:</h3>
+                <div className="text-sm">
+                  <Input 
+                    className="font-semibold w-full" 
+                    value={complimentaryGoodsData.recipientName} 
+                    onChange={(e) => handleComplimentaryGoodsChange('recipientName', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full" 
+                    value={complimentaryGoodsData.recipientAddress} 
+                    onChange={(e) => handleComplimentaryGoodsChange('recipientAddress', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full" 
+                    value={complimentaryGoodsData.recipientPhone} 
+                    onChange={(e) => handleComplimentaryGoodsChange('recipientPhone', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full" 
+                    value={complimentaryGoodsData.recipientEmail} 
+                    onChange={(e) => handleComplimentaryGoodsChange('recipientEmail', e.target.value)} 
+                  />
+                </div>
+              </div>
+              <div className="text-right">
+                <p>Date: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={complimentaryGoodsData.currentDate} 
+                    onChange={(e) => handleComplimentaryGoodsChange('currentDate', e.target.value)} 
+                  />
+                </p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-2">Items:</h3>
+              <table className="w-full border border-gray-300">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 px-2 py-1 text-left">Description</th>
+                    <th className="border border-gray-300 px-2 py-1 text-left">Quantity</th>
+                    <th className="border border-gray-300 px-2 py-1 text-left">Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complimentaryGoodsData.items.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-300 px-2 py-1">
+                        <Input 
+                          className="w-full" 
+                          value={item.description} 
+                          onChange={(e) => handleComplimentaryGoodsItemChange(index, 'description', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-2 py-1">
+                        <Input 
+                          className="w-full" 
+                          value={item.quantity} 
+                          onChange={(e) => handleComplimentaryGoodsItemChange(index, 'quantity', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-2 py-1">
+                        <Input 
+                          className="w-full" 
+                          value={item.remarks} 
+                          onChange={(e) => handleComplimentaryGoodsItemChange(index, 'remarks', e.target.value)} 
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={addComplimentaryGoodsItem}
+                >
+                  Add Item
+                </Button>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <p className="font-bold">Total Items: 
+                <Input 
+                  className="inline-block w-16 ml-2" 
+                  value={complimentaryGoodsData.totalItems} 
+                  onChange={(e) => handleComplimentaryGoodsChange('totalItems', e.target.value)} 
+                />
+              </p>
+            </div>
+            
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-2">Purpose:</h3>
+              <Textarea 
+                className="w-full" 
+                value={complimentaryGoodsData.purpose} 
+                onChange={(e) => handleComplimentaryGoodsChange('purpose', e.target.value)} 
+              />
+            </div>
+            
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-2">Notes:</h3>
+              <Textarea 
+                className="w-full" 
+                value={complimentaryGoodsData.notes} 
+                onChange={(e) => handleComplimentaryGoodsChange('notes', e.target.value)} 
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-8 mt-12">
+              <div>
+                <p className="mb-1">Prepared by:</p>
+                <Input 
+                  className="font-semibold w-full" 
+                  value={complimentaryGoodsData.preparedByName} 
+                  onChange={(e) => handleComplimentaryGoodsChange('preparedByName', e.target.value)} 
+                />
+                <Input 
+                  className="w-full" 
+                  value={complimentaryGoodsData.preparedByTitle} 
+                  onChange={(e) => handleComplimentaryGoodsChange('preparedByTitle', e.target.value)} 
+                />
+              </div>
+              <div>
+                <p className="mb-1">Approved by:</p>
+                <Input 
+                  className="font-semibold w-full" 
+                  value={complimentaryGoodsData.approvedByName} 
+                  onChange={(e) => handleComplimentaryGoodsChange('approvedByName', e.target.value)} 
+                />
+                <Input 
+                  className="w-full" 
+                  value={complimentaryGoodsData.approvedByTitle} 
+                  onChange={(e) => handleComplimentaryGoodsChange('approvedByTitle', e.target.value)} 
+                />
+              </div>
             </div>
           </div>
         );
