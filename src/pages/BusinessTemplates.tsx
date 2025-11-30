@@ -344,6 +344,36 @@ interface ComplimentaryGoodsData {
   notes: string;
 }
 
+interface ExpenseVoucherData {
+  companyName: string;
+  companyAddress: string;
+  voucherTitle: string;
+  voucherNumber: string;
+  voucherDate: string;
+  employeeName: string;
+  employeeId: string;
+  department: string;
+  expenseType: string;
+  expenseDetails: string;
+  amount: string;
+  amountInWords: string;
+  paymentMethod: string;
+  projectCode: string;
+  costCenter: string;
+  items: Array<{
+    date: string;
+    description: string;
+    amount: string;
+    receiptNo: string;
+  }>;
+  totalAmount: string;
+  preparedBy: string;
+  verifiedBy: string;
+  approvedBy: string;
+  receivedBy: string;
+  notes: string;
+}
+
 export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTemplatesProps) => {
   const { toast } = useToast();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -698,6 +728,36 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
     approvedByName: "Jane Smith",
     approvedByTitle: "Operations Director",
     notes: "Thank you for your business. We appreciate your continued support."
+  });
+
+  // Form data state for expense voucher template
+  const [expenseVoucherData, setExpenseVoucherData] = useState<ExpenseVoucherData>({
+    companyName: "YOUR COMPANY NAME",
+    companyAddress: "123 Company Street, City, State 12345",
+    voucherTitle: "EXPENSE VOUCHER",
+    voucherNumber: "EV-001",
+    voucherDate: new Date().toLocaleDateString(),
+    employeeName: "John Doe",
+    employeeId: "EMP001",
+    department: "IT Department",
+    expenseType: "Travel Expenses",
+    expenseDetails: "Business trip to client office",
+    amount: "$500.00",
+    amountInWords: "Five Hundred US Dollars Only",
+    paymentMethod: "Bank Transfer",
+    projectCode: "PRJ-2024-001",
+    costCenter: "CC-IT-001",
+    items: [
+      { date: "2024-01-15", description: "Flight Ticket", amount: "$300.00", receiptNo: "RCT-001" },
+      { date: "2024-01-16", description: "Hotel Accommodation", amount: "$150.00", receiptNo: "RCT-002" },
+      { date: "2024-01-17", description: "Taxi Fare", amount: "$50.00", receiptNo: "RCT-003" }
+    ],
+    totalAmount: "$500.00",
+    preparedBy: "Finance Team",
+    verifiedBy: "Accountant",
+    approvedBy: "Finance Manager",
+    receivedBy: "Employee Signature",
+    notes: "All expenses are business related and properly documented."
   });
 
   // Handle invoice form changes
@@ -1208,6 +1268,37 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
     });
   };
 
+  // Handle expense voucher form changes
+  const handleExpenseVoucherChange = <K extends keyof ExpenseVoucherData>(field: K, value: ExpenseVoucherData[K]) => {
+    setExpenseVoucherData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle expense voucher items changes
+  const handleExpenseVoucherItemChange = (index: number, field: string, value: string) => {
+    setExpenseVoucherData(prev => {
+      const newItems = [...prev.items];
+      newItems[index] = { ...newItems[index], [field]: value };
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Add expense voucher item
+  const addExpenseVoucherItem = () => {
+    setExpenseVoucherData(prev => ({
+      ...prev,
+      items: [...prev.items, { date: "", description: "", amount: "", receiptNo: "" }]
+    }));
+  };
+
+  // Remove expense voucher item
+  const removeExpenseVoucherItem = (index: number) => {
+    setExpenseVoucherData(prev => {
+      const newItems = [...prev.items];
+      newItems.splice(index, 1);
+      return { ...prev, items: newItems };
+    });
+  };
+
   const templates: Template[] = [
     {
       id: "delivery",
@@ -1267,6 +1358,12 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
       id: "complimentary",
       name: "Complimentary Goods",
       description: "Professional complimentary goods template",
+      icon: FileText
+    },
+    {
+      id: "expense",
+      name: "Expense Voucher",
+      description: "Professional expense voucher template",
       icon: FileText
     }
   ];
@@ -3968,6 +4065,237 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                   className="w-full" 
                   value={complimentaryGoodsData.approvedByTitle} 
                   onChange={(e) => handleComplimentaryGoodsChange('approvedByTitle', e.target.value)} 
+                />
+              </div>
+            </div>
+          </div>
+        );
+      case "expense":
+        return (
+          <div className="p-8 max-w-2xl mx-auto bg-white">
+            <div className="text-center mb-8 border-b-2 border-gray-800 pb-4">
+              <Input 
+                className="text-3xl font-bold text-gray-800 w-full text-center" 
+                value={expenseVoucherData.voucherTitle} 
+                onChange={(e) => handleExpenseVoucherChange('voucherTitle', e.target.value)} 
+              />
+              <div className="mt-2 text-gray-600">
+                <Input 
+                  className="font-semibold w-full text-center" 
+                  value={expenseVoucherData.companyName} 
+                  onChange={(e) => handleExpenseVoucherChange('companyName', e.target.value)} 
+                />
+                <Input 
+                  className="w-full text-center" 
+                  value={expenseVoucherData.companyAddress} 
+                  onChange={(e) => handleExpenseVoucherChange('companyAddress', e.target.value)} 
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <p>Voucher No: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={expenseVoucherData.voucherNumber} 
+                    onChange={(e) => handleExpenseVoucherChange('voucherNumber', e.target.value)} 
+                  />
+                </p>
+              </div>
+              <div className="text-right">
+                <p>Date: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={expenseVoucherData.voucherDate} 
+                    onChange={(e) => handleExpenseVoucherChange('voucherDate', e.target.value)} 
+                  />
+                </p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <p>Employee Name: 
+                  <Input 
+                    className="inline-block w-40 ml-2" 
+                    value={expenseVoucherData.employeeName} 
+                    onChange={(e) => handleExpenseVoucherChange('employeeName', e.target.value)} 
+                  />
+                </p>
+                <p>Employee ID: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={expenseVoucherData.employeeId} 
+                    onChange={(e) => handleExpenseVoucherChange('employeeId', e.target.value)} 
+                  />
+                </p>
+                <p>Department: 
+                  <Input 
+                    className="inline-block w-40 ml-2" 
+                    value={expenseVoucherData.department} 
+                    onChange={(e) => handleExpenseVoucherChange('department', e.target.value)} 
+                  />
+                </p>
+              </div>
+              <div>
+                <p>Expense Type: 
+                  <Input 
+                    className="inline-block w-40 ml-2" 
+                    value={expenseVoucherData.expenseType} 
+                    onChange={(e) => handleExpenseVoucherChange('expenseType', e.target.value)} 
+                  />
+                </p>
+                <p>Project Code: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={expenseVoucherData.projectCode} 
+                    onChange={(e) => handleExpenseVoucherChange('projectCode', e.target.value)} 
+                  />
+                </p>
+                <p>Cost Center: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={expenseVoucherData.costCenter} 
+                    onChange={(e) => handleExpenseVoucherChange('costCenter', e.target.value)} 
+                  />
+                </p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-2">Expense Details:</h3>
+              <Textarea 
+                className="w-full" 
+                value={expenseVoucherData.expenseDetails} 
+                onChange={(e) => handleExpenseVoucherChange('expenseDetails', e.target.value)} 
+              />
+            </div>
+            
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-2">Expense Items:</h3>
+              <table className="w-full border border-gray-300">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="border border-gray-300 px-2 py-1 text-left">Date</th>
+                    <th className="border border-gray-300 px-2 py-1 text-left">Description</th>
+                    <th className="border border-gray-300 px-2 py-1 text-left">Amount</th>
+                    <th className="border border-gray-300 px-2 py-1 text-left">Receipt No</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {expenseVoucherData.items.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-300 px-2 py-1">
+                        <Input 
+                          className="w-full" 
+                          value={item.date} 
+                          onChange={(e) => handleExpenseVoucherItemChange(index, 'date', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-2 py-1">
+                        <Input 
+                          className="w-full" 
+                          value={item.description} 
+                          onChange={(e) => handleExpenseVoucherItemChange(index, 'description', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-2 py-1">
+                        <Input 
+                          className="w-full" 
+                          value={item.amount} 
+                          onChange={(e) => handleExpenseVoucherItemChange(index, 'amount', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-2 py-1">
+                        <Input 
+                          className="w-full" 
+                          value={item.receiptNo} 
+                          onChange={(e) => handleExpenseVoucherItemChange(index, 'receiptNo', e.target.value)} 
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={addExpenseVoucherItem}
+                >
+                  Add Item
+                </Button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <p className="font-bold">Total Amount: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={expenseVoucherData.totalAmount} 
+                    onChange={(e) => handleExpenseVoucherChange('totalAmount', e.target.value)} 
+                  />
+                </p>
+                <p>Amount in Words: 
+                  <Input 
+                    className="inline-block w-full ml-2" 
+                    value={expenseVoucherData.amountInWords} 
+                    onChange={(e) => handleExpenseVoucherChange('amountInWords', e.target.value)} 
+                  />
+                </p>
+                <p>Payment Method: 
+                  <Input 
+                    className="inline-block w-32 ml-2" 
+                    value={expenseVoucherData.paymentMethod} 
+                    onChange={(e) => handleExpenseVoucherChange('paymentMethod', e.target.value)} 
+                  />
+                </p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <h3 className="font-bold text-gray-800 mb-2">Notes:</h3>
+              <Textarea 
+                className="w-full" 
+                value={expenseVoucherData.notes} 
+                onChange={(e) => handleExpenseVoucherChange('notes', e.target.value)} 
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 gap-8 mt-12">
+              <div>
+                <p className="mb-1">Prepared by:</p>
+                <Input 
+                  className="font-semibold w-full" 
+                  value={expenseVoucherData.preparedBy} 
+                  onChange={(e) => handleExpenseVoucherChange('preparedBy', e.target.value)} 
+                />
+              </div>
+              <div>
+                <p className="mb-1">Verified by:</p>
+                <Input 
+                  className="font-semibold w-full" 
+                  value={expenseVoucherData.verifiedBy} 
+                  onChange={(e) => handleExpenseVoucherChange('verifiedBy', e.target.value)} 
+                />
+              </div>
+              <div>
+                <p className="mb-1">Approved by:</p>
+                <Input 
+                  className="font-semibold w-full" 
+                  value={expenseVoucherData.approvedBy} 
+                  onChange={(e) => handleExpenseVoucherChange('approvedBy', e.target.value)} 
+                />
+              </div>
+              <div>
+                <p className="mb-1">Received by:</p>
+                <Input 
+                  className="font-semibold w-full" 
+                  value={expenseVoucherData.receivedBy} 
+                  onChange={(e) => handleExpenseVoucherChange('receivedBy', e.target.value)} 
                 />
               </div>
             </div>
