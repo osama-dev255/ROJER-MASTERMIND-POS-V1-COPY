@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,201 +29,984 @@ interface Template {
   icon: any;
 }
 
+interface InvoiceData {
+  businessName: string;
+  businessAddress: string;
+  businessPhone: string;
+  businessEmail: string;
+  clientName: string;
+  clientAddress: string;
+  clientCity: string;
+  clientPhone: string;
+  clientEmail: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  dueDate: string;
+  terms: string;
+  items: Array<{
+    itemNumber: string;
+    description: string;
+    quantity: string;
+    unit: string;
+    rate: string;
+    amount: string;
+  }>;
+  subtotal: string;
+  discount: string;
+  tax: string;
+  total: string;
+  amountPaid: string;
+  balance: string;
+  notes: string;
+  paymentOptions: string;
+}
+
+interface DeliveryNoteData {
+  businessName: string;
+  businessAddress: string;
+  businessPhone: string;
+  businessEmail: string;
+  customerName: string;
+  customerAddress: string;
+  customerPhone: string;
+  customerEmail: string;
+  deliveryNoteNumber: string;
+  deliveryDate: string;
+  deliveryDetailsDate: string;
+  vehicleNumber: string;
+  driverName: string;
+  items: Array<{
+    description: string;
+    quantity: string;
+    unit: string;
+    delivered: string;
+    remarks: string;
+  }>;
+  deliveryNotes: string;
+  totalItems: string;
+  totalQuantity: string;
+  totalPackages: string;
+  preparedByName: string;
+  preparedByDate: string;
+  driverSignatureName: string;
+  driverSignatureDate: string;
+  receivedByName: string;
+  receivedByDate: string;
+}
+
+interface OrderFormData {
+  businessName: string;
+  businessAddress: string;
+  businessPhone: string;
+  businessEmail: string;
+  businessContact: string;
+  supplierName: string;
+  supplierAddress: string;
+  supplierPhone: string;
+  supplierContact: string;
+  orderNumber: string;
+  orderDate: string;
+  requiredBy: string;
+  paymentTerms: string;
+  shipVia: string;
+  items: Array<{
+    itemNumber: string;
+    description: string;
+    quantity: string;
+    unit: string;
+    unitPrice: string;
+    total: string;
+  }>;
+  subtotal: string;
+  tax: string;
+  shipping: string;
+  total: string;
+  specialInstructions: string;
+  approval: string;
+  requestedByName: string;
+  requestedByTitle: string;
+  approvedByName: string;
+  approvedByTitle: string;
+  approvalDate: string;
+}
+
+interface ContractData {
+  agreementDate: string;
+  clientName: string;
+  clientAddress: string;
+  clientCityStateZip: string;
+  clientContact: string;
+  clientPhone: string;
+  clientEmail: string;
+  serviceProviderName: string;
+  serviceProviderAddress: string;
+  serviceProviderCityStateZip: string;
+  serviceProviderContact: string;
+  serviceProviderPhone: string;
+  serviceProviderEmail: string;
+  services: string[];
+  termStartDate: string;
+  termDuration: string;
+  compensation: Array<{
+    description: string;
+    value: string;
+  }>;
+  additionalServicesRate: string;
+  warranties: string;
+  termination: string;
+  governingLaw: string;
+  clientSignature: string;
+  clientPrintName: string;
+  clientTitle: string;
+  clientSignatureDate: string;
+  serviceProviderSignature: string;
+  serviceProviderPrintName: string;
+  serviceProviderTitle: string;
+  serviceProviderSignatureDate: string;
+}
+
+interface ReceiptData {
+  businessName: string;
+  businessAddress: string;
+  businessPhone: string;
+  receiptNumber: string;
+  date: string;
+  time: string;
+  cashier: string;
+  items: Array<{
+    name: string;
+    amount: string;
+  }>;
+  subtotal: string;
+  tax: string;
+  total: string;
+  amountTendered: string;
+  change: string;
+  paymentMethod: string;
+  transactionId: string;
+  thankYouMessage: string;
+  returnPolicy: string;
+  exchangePolicy: string;
+}
+
+interface NoticeData {
+  noticeTitle: string;
+  documentControlNumber: string;
+  date: string;
+  to: string;
+  from: string;
+  subject: string;
+  introduction: string;
+  keyInformation: string[];
+  effectiveDateLabel: string;
+  effectiveDate: string;
+  actionRequiredLabel: string;
+  actionRequired: string;
+  deadlineDate: string;
+  contactLabel: string;
+  contactInfo: string;
+  departmentPersonName: string;
+  phoneNumber: string;
+  emailAddress: string;
+  additionalInformation: string;
+  issuedByLabel: string;
+  authorizedSignatoryName: string;
+  title: string;
+  companyName: string;
+  acknowledgmentLabel: string;
+  signatureLine: string;
+  printNameLine: string;
+  dateLine: string;
+  footerMessage: string;
+  distributionInfo: string;
+}
+
+interface QuoteData {
+  quoteTitle: string;
+  quoteSubtitle: string;
+  quoteNumber: string;
+  preparedFor: {
+    company: string;
+    contactPerson: string;
+    address: string;
+    cityStateZip: string;
+    phone: string;
+    email: string;
+  };
+  preparedBy: {
+    company: string;
+    contactPerson: string;
+    address: string;
+    cityStateZip: string;
+    phone: string;
+    email: string;
+  };
+  date: string;
+  validUntil: string;
+  preparedByPerson: string;
+  projectDescription: string;
+  items: Array<{
+    itemNumber: string;
+    description: string;
+    quantity: string;
+    unit: string;
+    unitPrice: string;
+    total: string;
+  }>;
+  subtotal: string;
+  discountLabel: string;
+  discountValue: string;
+  taxLabel: string;
+  taxValue: string;
+  totalLabel: string;
+  totalValue: string;
+  termsAndConditions: string[];
+  paymentSchedule: string[];
+  acceptanceMessage: string;
+  signatureLine: string;
+  printNameLine: string;
+  titleLine: string;
+  dateLine: string;
+  companyLine: string;
+  thankYouMessage: string;
+  quotePreparedBy: string;
+  validUntilDate: string;
+}
+
+interface ReportData {
+  reportTitle: string;
+  reportingPeriod: string;
+  preparedBy: string;
+  metrics: Array<{
+    value: string;
+    label: string;
+    color: string;
+  }>;
+  kpiTitle: string;
+  kpis: string[];
+  operationalHighlightsTitle: string;
+  operationalHighlights: string[];
+  strategicInitiativesTitle: string;
+  strategicInitiatives: string[];
+}
+
 export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTemplatesProps) => {
   const { toast } = useToast();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
-  // Form data state for each template type
-  interface DeliveryData {
-    businessName: string;
-    businessAddress: string;
-    businessPhone: string;
-    businessEmail: string;
-    customerName: string;
-    customerAddress1: string;
-    customerAddress2: string;
-    customerPhone: string;
-    customerEmail: string;
-    deliveryNoteNumber: string;
-    date: string;
-    deliveryDate: string;
-    vehicleNumber: string;
-    driver: string;
-    items: Array<{
-      description: string;
-      quantity: string;
-      unit: string;
-      delivered: string;
-      remarks: string;
-    }>;
-    deliveryNotes: string;
-    totalItems: string;
-    totalQuantity: string;
-    totalPackages: string;
-    preparedByName: string;
-    preparedByDate: string;
-    driverSignatureName: string;
-    driverSignatureDate: string;
-    receivedByName: string;
-    receivedByDate: string;
-  }
-  
-  interface OrderData {
-    businessName: string;
-    orderNumber: string;
-    vendorName: string;
-    vendorAddress: string;
-    vendorCity: string;
-    vendorPhone: string;
-    vendorContact: string;
-    shipToName: string;
-    shipToAddress: string;
-    shipToCity: string;
-    shipToPhone: string;
-    shipToContact: string;
-    date: string;
-    requiredBy: string;
-    paymentTerms: string;
-    shipVia: string;
-    items: Array<{
-      number: string;
-      description: string;
-      quantity: string;
-      unit: string;
-      rate: string;
-      amount: string;
-    }>;
-    notes: string;
-    approvalNotes: string;
-    requestedByName: string;
-    requestedByTitle: string;
-    approvedByName: string;
-    approvedByTitle: string;
-    approvalDate: string;
-  }
-  
-  const [deliveryData, setDeliveryData] = useState<DeliveryData>({
+  // Form data state for invoice template
+  const [invoiceData, setInvoiceData] = useState<InvoiceData>({
+    businessName: "Your Business Name",
+    businessAddress: "123 Business Street",
+    businessPhone: "(555) 123-4567",
+    businessEmail: "billing@yourbusiness.com",
+    clientName: "Client Company Name",
+    clientAddress: "456 Client Avenue",
+    clientCity: "Client City, State 67890",
+    clientPhone: "(555) 987-6543",
+    clientEmail: "accounts@clientcompany.com",
+    invoiceNumber: "INV-2024-001",
+    invoiceDate: new Date().toLocaleDateString(),
+    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    terms: "Net 30",
+    items: [
+      { itemNumber: "WEB-001", description: "Website Design & Development", quantity: "1", unit: "Project", rate: "1800.00", amount: "1800.00" },
+      { itemNumber: "SUP-002", description: "Monthly Support (3 months)", quantity: "3", unit: "Months", rate: "150.00", amount: "450.00" }
+    ],
+    subtotal: "2250.00",
+    discount: "50.00",
+    tax: "195.84",
+    total: "2395.84",
+    amountPaid: "0.00",
+    balance: "2395.84",
+    notes: "Thank you for your business! Payment due within 30 days.",
+    paymentOptions: "Bank Transfer, Check, or Credit Card"
+  });
+
+  // Form data state for delivery note template
+  const [deliveryNoteData, setDeliveryNoteData] = useState<DeliveryNoteData>({
     businessName: "YOUR BUSINESS NAME",
     businessAddress: "123 Business Street, City, Country",
     businessPhone: "+1234567890",
     businessEmail: "info@yourbusiness.com",
-    customerName: "",
-    customerAddress1: "",
-    customerAddress2: "",
-    customerPhone: "",
-    customerEmail: "",
-    deliveryNoteNumber: "DN-" + new Date().getFullYear() + "-001",
-    date: new Date().toLocaleDateString(),
-    deliveryDate: "",
-    vehicleNumber: "",
-    driver: "",
+    customerName: "Customer Name",
+    customerAddress: "Customer Address Line 1\nCustomer Address Line 2",
+    customerPhone: "+1234567890",
+    customerEmail: "customer@example.com",
+    deliveryNoteNumber: "DN-001",
+    deliveryDate: new Date().toLocaleDateString(),
+    deliveryDetailsDate: "_________",
+    vehicleNumber: "_________",
+    driverName: "_________",
     items: [
-      { description: "", quantity: "", unit: "", delivered: "", remarks: "" }
+      { description: "Sample Product 1", quantity: "10", unit: "pcs", delivered: "10", remarks: "Good condition" },
+      { description: "Sample Product 2", quantity: "5", unit: "boxes", delivered: "5", remarks: "Fragile" },
+      { description: "Sample Product 3", quantity: "2", unit: "units", delivered: "2", remarks: "" }
     ],
-    deliveryNotes: "",
-    totalItems: "",
-    totalQuantity: "",
-    totalPackages: "",
-    preparedByName: "",
-    preparedByDate: "",
-    driverSignatureName: "",
-    driverSignatureDate: "",
-    receivedByName: "",
-    receivedByDate: ""
+    deliveryNotes: "Please handle with care. Fragile items included.\nSignature required upon delivery.",
+    totalItems: "17",
+    totalQuantity: "28 units",
+    totalPackages: "3",
+    preparedByName: "_________________",
+    preparedByDate: "_________",
+    driverSignatureName: "_________________",
+    driverSignatureDate: "_________",
+    receivedByName: "_________________",
+    receivedByDate: "_________"
   });
-  
-  const [orderData, setOrderData] = useState<OrderData>({
+
+  // Form data state for order form template
+  const [orderFormData, setOrderFormData] = useState<OrderFormData>({
     businessName: "Your Business Name",
-    orderNumber: "PO-" + new Date().getFullYear() + "-001",
-    vendorName: "",
-    vendorAddress: "",
-    vendorCity: "",
-    vendorPhone: "",
-    vendorContact: "",
-    shipToName: "Your Business Name",
-    shipToAddress: "123 Business Street",
-    shipToCity: "Business City, State 67890",
-    shipToPhone: "(555) 987-6543",
-    shipToContact: "Jane Manager",
-    date: new Date().toLocaleDateString(),
-    requiredBy: "",
+    businessAddress: "123 Business Street",
+    businessPhone: "(555) 987-6543",
+    businessEmail: "info@yourbusiness.com",
+    businessContact: "Jane Manager",
+    supplierName: "Supplier Company Name",
+    supplierAddress: "123 Supplier Street",
+    supplierPhone: "(555) 123-4567",
+    supplierContact: "John Supplier",
+    orderNumber: "PO-2024-001",
+    orderDate: new Date().toLocaleDateString(),
+    requiredBy: "_________",
     paymentTerms: "Net 30",
     shipVia: "Ground",
     items: [
-      { number: "", description: "", quantity: "", unit: "", rate: "", amount: "" }
+      { itemNumber: "ITM-001", description: "Office Chairs", quantity: "10", unit: "EA", unitPrice: "89.99", total: "899.90" },
+      { itemNumber: "ITM-002", description: "Desk Lamps", quantity: "15", unit: "EA", unitPrice: "24.50", total: "367.50" },
+      { itemNumber: "ITM-003", description: "Filing Cabinets", quantity: "3", unit: "EA", unitPrice: "149.99", total: "449.97" }
     ],
-    notes: "",
-    approvalNotes: "",
-    requestedByName: "",
+    subtotal: "1,717.37",
+    tax: "145.98",
+    shipping: "45.00",
+    total: "1,908.35",
+    specialInstructions: "Please deliver by Friday. Call before delivery.",
+    approval: "Approved for purchase per budget approval.",
+    requestedByName: "_______________________",
     requestedByTitle: "",
-    approvedByName: "",
+    approvedByName: "_______________________",
     approvedByTitle: "",
-    approvalDate: ""
+    approvalDate: "_______________________"
   });
-  
-  // Handle delivery form changes
-  const handleDeliveryChange = <K extends keyof DeliveryData>(field: K, value: DeliveryData[K]) => {
-    setDeliveryData(prev => ({ ...prev, [field]: value }));
+
+  // Form data state for contract template
+  const [contractData, setContractData] = useState<ContractData>({
+    agreementDate: new Date().toLocaleDateString(),
+    clientName: "Client Company Name",
+    clientAddress: "Client Address Line 1",
+    clientCityStateZip: "City, State ZIP Code",
+    clientContact: "Client Contact Person",
+    clientPhone: "(555) 123-4567",
+    clientEmail: "client@example.com",
+    serviceProviderName: "Your Business Name",
+    serviceProviderAddress: "123 Business Street",
+    serviceProviderCityStateZip: "City, State ZIP Code",
+    serviceProviderContact: "Service Provider Contact",
+    serviceProviderPhone: "(555) 987-6543",
+    serviceProviderEmail: "services@yourbusiness.com",
+    services: [
+      "Monthly website maintenance and updates",
+      "Technical support during business hours",
+      "Security monitoring and updates",
+      "Performance optimization",
+      "Backup and recovery services"
+    ],
+    termStartDate: "_________",
+    termDuration: "12 months",
+    compensation: [
+      { description: "Monthly fee", value: "$1,500.00" },
+      { description: "Payment due", value: "Within 15 days of invoice date" },
+      { description: "Late payment penalty", value: "1.5% per month" }
+    ],
+    additionalServicesRate: "$125/hour",
+    warranties: "The Service Provider warrants that all services will be performed in a professional and workmanlike manner. The Service Provider makes no other warranties, express or implied.",
+    termination: "Either party may terminate this Agreement with 30 days written notice. Upon termination, the Client shall pay for all services rendered up to the termination date.",
+    governingLaw: "[State]",
+    clientSignature: "_________________________________",
+    clientPrintName: "_______________________________",
+    clientTitle: "____________________________________",
+    clientSignatureDate: "____________________________________",
+    serviceProviderSignature: "_________________________________",
+    serviceProviderPrintName: "_______________________________",
+    serviceProviderTitle: "____________________________________",
+    serviceProviderSignatureDate: "____________________________________"
+  });
+
+  // Form data state for receipt template
+  const [receiptData, setReceiptData] = useState<ReceiptData>({
+    businessName: "YOUR BUSINESS NAME",
+    businessAddress: "123 Business Street, City, State 12345",
+    businessPhone: "(555) 123-4567",
+    receiptNumber: "RCT-2024-" + Math.floor(Math.random() * 10000),
+    date: new Date().toLocaleDateString(),
+    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+    cashier: "John D.",
+    items: [
+      { name: "Product 1", amount: "$49.99" },
+      { name: "Product 2", amount: "$29.50" },
+      { name: "Service Fee", amount: "$15.00" }
+    ],
+    subtotal: "$94.49",
+    tax: "$8.03",
+    total: "$102.52",
+    amountTendered: "$120.00",
+    change: "$17.48",
+    paymentMethod: "CASH",
+    transactionId: "TXN-" + Math.floor(Math.random() * 1000000),
+    thankYouMessage: "Thank you for your purchase!",
+    returnPolicy: "Items sold are not returnable",
+    exchangePolicy: "Exchange within 7 days with receipt"
+  });
+
+  // Form data state for notice template
+  const [noticeData, setNoticeData] = useState<NoticeData>({
+    noticeTitle: "OFFICIAL NOTICE",
+    documentControlNumber: "NT-" + new Date().getFullYear() + "-" + Math.floor(Math.random() * 10000),
+    date: new Date().toLocaleDateString(),
+    to: "All Employees/Customers/Stakeholders",
+    from: "Management/Administration",
+    subject: "Important Notice Regarding Operations",
+    introduction: "Dear Recipients,\n\nWe are writing to inform you of important changes that will affect our operations. Please read this notice carefully as it contains essential information that impacts all stakeholders.",
+    keyInformation: [
+      "New operational hours will be effective starting [Date]",
+      "Updated security protocols must be followed by all personnel",
+      "System maintenance scheduled for [Date and Time]",
+      "New contact information for department heads"
+    ],
+    effectiveDateLabel: "Effective Date:",
+    effectiveDate: "[Insert Effective Date]",
+    actionRequiredLabel: "Action Required:",
+    actionRequired: "All recipients must acknowledge receipt of this notice by signing and returning the attached acknowledgment form by [Deadline Date].",
+    deadlineDate: "[Deadline Date]",
+    contactLabel: "Contact Information:",
+    contactInfo: "For questions regarding this notice, please contact:",
+    departmentPersonName: "[Department/Person Name]",
+    phoneNumber: "[Phone Number]",
+    emailAddress: "[Email Address]",
+    additionalInformation: "This notice is issued in accordance with company policy and regulatory requirements. Failure to comply with the stated changes may result in disciplinary action or other consequences as outlined in company guidelines.",
+    issuedByLabel: "Issued By:",
+    authorizedSignatoryName: "[Authorized Signatory Name]",
+    title: "[Title]",
+    companyName: "[Company Name]",
+    acknowledgmentLabel: "Acknowledgment:",
+    signatureLine: "Signature: ________________________",
+    printNameLine: "Print Name: _______________________",
+    dateLine: "Date: ____________________________",
+    footerMessage: "This is an official communication. Please retain for your records.",
+    distributionInfo: "Distribution: All Departments | Document Control ID: NT-" + new Date().getFullYear() + "-" + Math.floor(Math.random() * 10000)
+  });
+
+  // Form data state for quote template
+  const [quoteData, setQuoteData] = useState<QuoteData>({
+    quoteTitle: "QUOTATION",
+    quoteSubtitle: "Professional Service Proposal",
+    quoteNumber: "QT-2024-" + Math.floor(Math.random() * 10000),
+    preparedFor: {
+      company: "Client Company Name",
+      contactPerson: "Client Contact Person",
+      address: "456 Client Avenue",
+      cityStateZip: "Client City, State 67890",
+      phone: "(555) 987-6543",
+      email: "client@example.com"
+    },
+    preparedBy: {
+      company: "Your Business Name",
+      contactPerson: "Your Contact Person",
+      address: "123 Business Street",
+      cityStateZip: "Business City, State 12345",
+      phone: "(555) 123-4567",
+      email: "sales@yourbusiness.com"
+    },
+    date: new Date().toLocaleDateString(),
+    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    preparedByPerson: "Sales Representative",
+    projectDescription: "We are pleased to provide you with the following quotation for professional services. This proposal outlines our understanding of your requirements and our recommended solution.",
+    items: [
+      { itemNumber: "001", description: "Consultation Services", quantity: "10", unit: "Hours", unitPrice: "$125.00", total: "$1,250.00" },
+      { itemNumber: "002", description: "Software License", quantity: "5", unit: "Licenses", unitPrice: "$299.99", total: "$1,499.95" },
+      { itemNumber: "003", description: "Installation & Setup", quantity: "1", unit: "Project", unitPrice: "$750.00", total: "$750.00" },
+      { itemNumber: "004", description: "Training Session", quantity: "3", unit: "Sessions", unitPrice: "$200.00", total: "$600.00" }
+    ],
+    subtotal: "$4,099.95",
+    discountLabel: "DISCOUNT (5%)",
+    discountValue: "-$205.00",
+    taxLabel: "TAX (8.25%)",
+    taxValue: "$322.12",
+    totalLabel: "TOTAL",
+    totalValue: "$4,217.07",
+    termsAndConditions: [
+      "This quote is valid for 30 days",
+      "50% deposit required to begin work",
+      "Balance due upon completion",
+      "Travel expenses not included"
+    ],
+    paymentSchedule: [
+      "Deposit: $2,108.54 (50%)",
+      "Final Payment: $2,108.53 (50%)"
+    ],
+    acceptanceMessage: "By signing below, you agree to the terms and conditions outlined in this quotation.",
+    signatureLine: "Signature: _________________________________",
+    printNameLine: "Print Name: _______________________________",
+    titleLine: "Title: ____________________________________",
+    dateLine: "Date: ____________________________________",
+    companyLine: "Company: _________________________________",
+    thankYouMessage: "Thank you for considering our services. We look forward to working with you!",
+    quotePreparedBy: "Sales Department",
+    validUntilDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()
+  });
+
+  // Form data state for report template
+  const [reportData, setReportData] = useState<ReportData>({
+    reportTitle: "MONTHLY BUSINESS REPORT",
+    reportingPeriod: new Date().toLocaleDateString() + " - " + new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString(),
+    preparedBy: "Management Team",
+    metrics: [
+      { value: "$42,580", label: "Total Revenue", color: "blue" },
+      { value: "$28,930", label: "Net Profit", color: "green" },
+      { value: "$12,450", label: "Expenses", color: "yellow" },
+      { value: "-3.4%", label: "Profit Margin", color: "red" }
+    ],
+    kpiTitle: "Key Performance Indicators (KPIs)",
+    kpis: [
+      "Sales growth: 5.6%",
+      "Customer satisfaction: 92%",
+      "Employee turnover: 8%"
+    ],
+    operationalHighlightsTitle: "Operational Highlights",
+    operationalHighlights: [
+      "Completed 12 major projects",
+      "Launched new product line",
+      "Expanded market reach by 15%"
+    ],
+    strategicInitiativesTitle: "Strategic Initiatives",
+    strategicInitiatives: [
+      "Increase marketing budget allocation to digital channels by 15%",
+      "Invest in additional warehouse capacity to meet growing demand",
+      "Enhance staff training programs to improve service quality"
+    ]
+  });
+
+  // Handle invoice form changes
+  const handleInvoiceChange = <K extends keyof InvoiceData>(field: K, value: InvoiceData[K]) => {
+    setInvoiceData(prev => ({ ...prev, [field]: value }));
   };
-  
-  // Handle order form changes
-  const handleOrderChange = <K extends keyof OrderData>(field: K, value: OrderData[K]) => {
-    setOrderData(prev => ({ ...prev, [field]: value }));
-  };
-  
-  // Handle delivery item changes
-  const handleDeliveryItemChange = (index: number, field: string, value: string) => {
-    setDeliveryData(prev => {
+
+  // Handle invoice item changes
+  const handleInvoiceItemChange = (index: number, field: string, value: string) => {
+    setInvoiceData(prev => {
       const newItems = [...prev.items];
       newItems[index] = { ...newItems[index], [field]: value };
       return { ...prev, items: newItems };
     });
   };
-  
-  // Handle order item changes
-  const handleOrderItemChange = (index: number, field: string, value: string) => {
-    setOrderData(prev => {
+
+  // Add invoice item
+  const addInvoiceItem = () => {
+    setInvoiceData(prev => ({
+      ...prev,
+      items: [...prev.items, { itemNumber: "", description: "", quantity: "", unit: "", rate: "", amount: "" }]
+    }));
+  };
+
+  // Remove invoice item
+  const removeInvoiceItem = (index: number) => {
+    setInvoiceData(prev => {
+      const newItems = [...prev.items];
+      newItems.splice(index, 1);
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Handle delivery note form changes
+  const handleDeliveryNoteChange = <K extends keyof DeliveryNoteData>(field: K, value: DeliveryNoteData[K]) => {
+    setDeliveryNoteData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle delivery note item changes
+  const handleDeliveryNoteItemChange = (index: number, field: string, value: string) => {
+    setDeliveryNoteData(prev => {
       const newItems = [...prev.items];
       newItems[index] = { ...newItems[index], [field]: value };
       return { ...prev, items: newItems };
     });
   };
-  
-  // Add delivery item
-  const addDeliveryItem = () => {
-    setDeliveryData(prev => ({
+
+  // Add delivery note item
+  const addDeliveryNoteItem = () => {
+    setDeliveryNoteData(prev => ({
       ...prev,
       items: [...prev.items, { description: "", quantity: "", unit: "", delivered: "", remarks: "" }]
     }));
   };
-  
-  // Add order item
-  const addOrderItem = () => {
-    setOrderData(prev => ({
+
+  // Remove delivery note item
+  const removeDeliveryNoteItem = (index: number) => {
+    setDeliveryNoteData(prev => {
+      const newItems = [...prev.items];
+      newItems.splice(index, 1);
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Handle order form changes
+  const handleOrderFormChange = <K extends keyof OrderFormData>(field: K, value: OrderFormData[K]) => {
+    setOrderFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle order form item changes
+  const handleOrderFormItemChange = (index: number, field: string, value: string) => {
+    setOrderFormData(prev => {
+      const newItems = [...prev.items];
+      newItems[index] = { ...newItems[index], [field]: value };
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Add order form item
+  const addOrderFormItem = () => {
+    setOrderFormData(prev => ({
       ...prev,
-      items: [...prev.items, { number: "", description: "", quantity: "", unit: "", rate: "", amount: "" }]
+      items: [...prev.items, { itemNumber: "", description: "", quantity: "", unit: "", unitPrice: "", total: "" }]
     }));
   };
-  
-  // Remove delivery item
-  const removeDeliveryItem = (index: number) => {
-    setDeliveryData(prev => {
+
+  // Remove order form item
+  const removeOrderFormItem = (index: number) => {
+    setOrderFormData(prev => {
       const newItems = [...prev.items];
       newItems.splice(index, 1);
       return { ...prev, items: newItems };
     });
   };
-  
-  // Remove order item
-  const removeOrderItem = (index: number) => {
-    setOrderData(prev => {
+
+  // Handle contract form changes
+  const handleContractChange = <K extends keyof ContractData>(field: K, value: ContractData[K]) => {
+    setContractData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle contract services changes
+  const handleContractServicesChange = (index: number, value: string) => {
+    setContractData(prev => {
+      const newServices = [...prev.services];
+      newServices[index] = value;
+      return { ...prev, services: newServices };
+    });
+  };
+
+  // Add contract service
+  const addContractService = () => {
+    setContractData(prev => ({
+      ...prev,
+      services: [...prev.services, ""]
+    }));
+  };
+
+  // Remove contract service
+  const removeContractService = (index: number) => {
+    setContractData(prev => {
+      const newServices = [...prev.services];
+      newServices.splice(index, 1);
+      return { ...prev, services: newServices };
+    });
+  };
+
+  // Handle contract compensation changes
+  const handleContractCompensationChange = (index: number, field: string, value: string) => {
+    setContractData(prev => {
+      const newCompensation = [...prev.compensation];
+      newCompensation[index] = { ...newCompensation[index], [field]: value };
+      return { ...prev, compensation: newCompensation };
+    });
+  };
+
+  // Add contract compensation item
+  const addContractCompensationItem = () => {
+    setContractData(prev => ({
+      ...prev,
+      compensation: [...prev.compensation, { description: "", value: "" }]
+    }));
+  };
+
+  // Remove contract compensation item
+  const removeContractCompensationItem = (index: number) => {
+    setContractData(prev => {
+      const newCompensation = [...prev.compensation];
+      newCompensation.splice(index, 1);
+      return { ...prev, compensation: newCompensation };
+    });
+  };
+
+  // Handle receipt form changes
+  const handleReceiptChange = <K extends keyof ReceiptData>(field: K, value: ReceiptData[K]) => {
+    setReceiptData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle receipt item changes
+  const handleReceiptItemChange = (index: number, field: string, value: string) => {
+    setReceiptData(prev => {
+      const newItems = [...prev.items];
+      newItems[index] = { ...newItems[index], [field]: value };
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Add receipt item
+  const addReceiptItem = () => {
+    setReceiptData(prev => ({
+      ...prev,
+      items: [...prev.items, { name: "", amount: "" }]
+    }));
+  };
+
+  // Remove receipt item
+  const removeReceiptItem = (index: number) => {
+    setReceiptData(prev => {
       const newItems = [...prev.items];
       newItems.splice(index, 1);
       return { ...prev, items: newItems };
     });
   };
-  
+
+  // Handle notice form changes
+  const handleNoticeChange = <K extends keyof NoticeData>(field: K, value: NoticeData[K]) => {
+    setNoticeData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle notice key information changes
+  const handleNoticeKeyInfoChange = (index: number, value: string) => {
+    setNoticeData(prev => {
+      const newKeyInfo = [...prev.keyInformation];
+      newKeyInfo[index] = value;
+      return { ...prev, keyInformation: newKeyInfo };
+    });
+  };
+
+  // Add notice key information item
+  const addNoticeKeyInfoItem = () => {
+    setNoticeData(prev => ({
+      ...prev,
+      keyInformation: [...prev.keyInformation, ""]
+    }));
+  };
+
+  // Remove notice key information item
+  const removeNoticeKeyInfoItem = (index: number) => {
+    setNoticeData(prev => {
+      const newKeyInfo = [...prev.keyInformation];
+      newKeyInfo.splice(index, 1);
+      return { ...prev, keyInformation: newKeyInfo };
+    });
+  };
+
+  // Handle quote form changes
+  const handleQuoteChange = <K extends keyof QuoteData>(field: K, value: QuoteData[K]) => {
+    setQuoteData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle quote preparedFor changes
+  const handleQuotePreparedForChange = <K extends keyof QuoteData['preparedFor']>(field: K, value: QuoteData['preparedFor'][K]) => {
+    setQuoteData(prev => ({
+      ...prev,
+      preparedFor: { ...prev.preparedFor, [field]: value }
+    }));
+  };
+
+  // Handle quote preparedBy changes
+  const handleQuotePreparedByChange = <K extends keyof QuoteData['preparedBy']>(field: K, value: QuoteData['preparedBy'][K]) => {
+    setQuoteData(prev => ({
+      ...prev,
+      preparedBy: { ...prev.preparedBy, [field]: value }
+    }));
+  };
+
+  // Handle quote item changes
+  const handleQuoteItemChange = (index: number, field: string, value: string) => {
+    setQuoteData(prev => {
+      const newItems = [...prev.items];
+      newItems[index] = { ...newItems[index], [field]: value };
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Add quote item
+  const addQuoteItem = () => {
+    setQuoteData(prev => ({
+      ...prev,
+      items: [...prev.items, { itemNumber: "", description: "", quantity: "", unit: "", unitPrice: "", total: "" }]
+    }));
+  };
+
+  // Remove quote item
+  const removeQuoteItem = (index: number) => {
+    setQuoteData(prev => {
+      const newItems = [...prev.items];
+      newItems.splice(index, 1);
+      return { ...prev, items: newItems };
+    });
+  };
+
+  // Handle quote terms and conditions changes
+  const handleQuoteTermsChange = (index: number, value: string) => {
+    setQuoteData(prev => {
+      const newTerms = [...prev.termsAndConditions];
+      newTerms[index] = value;
+      return { ...prev, termsAndConditions: newTerms };
+    });
+  };
+
+  // Add quote terms and conditions item
+  const addQuoteTermsItem = () => {
+    setQuoteData(prev => ({
+      ...prev,
+      termsAndConditions: [...prev.termsAndConditions, ""]
+    }));
+  };
+
+  // Remove quote terms and conditions item
+  const removeQuoteTermsItem = (index: number) => {
+    setQuoteData(prev => {
+      const newTerms = [...prev.termsAndConditions];
+      newTerms.splice(index, 1);
+      return { ...prev, termsAndConditions: newTerms };
+    });
+  };
+
+  // Handle quote payment schedule changes
+  const handleQuotePaymentScheduleChange = (index: number, value: string) => {
+    setQuoteData(prev => {
+      const newSchedule = [...prev.paymentSchedule];
+      newSchedule[index] = value;
+      return { ...prev, paymentSchedule: newSchedule };
+    });
+  };
+
+  // Add quote payment schedule item
+  const addQuotePaymentScheduleItem = () => {
+    setQuoteData(prev => ({
+      ...prev,
+      paymentSchedule: [...prev.paymentSchedule, ""]
+    }));
+  };
+
+  // Remove quote payment schedule item
+  const removeQuotePaymentScheduleItem = (index: number) => {
+    setQuoteData(prev => {
+      const newSchedule = [...prev.paymentSchedule];
+      newSchedule.splice(index, 1);
+      return { ...prev, paymentSchedule: newSchedule };
+    });
+  };
+
+  // Handle report form changes
+  const handleReportChange = <K extends keyof ReportData>(field: K, value: ReportData[K]) => {
+    setReportData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle report metric changes
+  const handleReportMetricChange = (index: number, field: string, value: string) => {
+    setReportData(prev => {
+      const newMetrics = [...prev.metrics];
+      newMetrics[index] = { ...newMetrics[index], [field]: value };
+      return { ...prev, metrics: newMetrics };
+    });
+  };
+
+  // Add report metric
+  const addReportMetric = () => {
+    setReportData(prev => ({
+      ...prev,
+      metrics: [...prev.metrics, { value: "", label: "", color: "blue" }]
+    }));
+  };
+
+  // Remove report metric
+  const removeReportMetric = (index: number) => {
+    setReportData(prev => {
+      const newMetrics = [...prev.metrics];
+      newMetrics.splice(index, 1);
+      return { ...prev, metrics: newMetrics };
+    });
+  };
+
+  // Handle report KPI changes
+  const handleReportKpiChange = (index: number, value: string) => {
+    setReportData(prev => {
+      const newKpis = [...prev.kpis];
+      newKpis[index] = value;
+      return { ...prev, kpis: newKpis };
+    });
+  };
+
+  // Add report KPI
+  const addReportKpi = () => {
+    setReportData(prev => ({
+      ...prev,
+      kpis: [...prev.kpis, ""]
+    }));
+  };
+
+  // Remove report KPI
+  const removeReportKpi = (index: number) => {
+    setReportData(prev => {
+      const newKpis = [...prev.kpis];
+      newKpis.splice(index, 1);
+      return { ...prev, kpis: newKpis };
+    });
+  };
+
+  // Handle report operational highlight changes
+  const handleReportOperationalHighlightChange = (index: number, value: string) => {
+    setReportData(prev => {
+      const newHighlights = [...prev.operationalHighlights];
+      newHighlights[index] = value;
+      return { ...prev, operationalHighlights: newHighlights };
+    });
+  };
+
+  // Add report operational highlight
+  const addReportOperationalHighlight = () => {
+    setReportData(prev => ({
+      ...prev,
+      operationalHighlights: [...prev.operationalHighlights, ""]
+    }));
+  };
+
+  // Remove report operational highlight
+  const removeReportOperationalHighlight = (index: number) => {
+    setReportData(prev => {
+      const newHighlights = [...prev.operationalHighlights];
+      newHighlights.splice(index, 1);
+      return { ...prev, operationalHighlights: newHighlights };
+    });
+  };
+
+  // Handle report strategic initiative changes
+  const handleReportStrategicInitiativeChange = (index: number, value: string) => {
+    setReportData(prev => {
+      const newInitiatives = [...prev.strategicInitiatives];
+      newInitiatives[index] = value;
+      return { ...prev, strategicInitiatives: newInitiatives };
+    });
+  };
+
+  // Add report strategic initiative
+  const addReportStrategicInitiative = () => {
+    setReportData(prev => ({
+      ...prev,
+      strategicInitiatives: [...prev.strategicInitiatives, ""]
+    }));
+  };
+
+  // Remove report strategic initiative
+  const removeReportStrategicInitiative = (index: number) => {
+    setReportData(prev => {
+      const newInitiatives = [...prev.strategicInitiatives];
+      newInitiatives.splice(index, 1);
+      return { ...prev, strategicInitiatives: newInitiatives };
+    });
+  };
+
   const templates: Template[] = [
     {
       id: "delivery",
@@ -277,169 +1060,61 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
 
   const handlePrintTemplate = (templateId: string) => {
     try {
-      // Print the template based on type using actual form data
+      // Create a mock transaction object for the template
+      const mockTransaction = {
+        receiptNumber: `TPL-${Date.now()}`,
+        date: new Date().toISOString(),
+        items: [
+          { name: "Sample Item 1", quantity: 1, price: 100.00, total: 100.00 },
+          { name: "Sample Item 2", quantity: 2, price: 50.00, total: 100.00 }
+        ],
+        subtotal: 200.00,
+        tax: 20.00,
+        discount: 0.00,
+        total: 220.00,
+        amountReceived: 220.00,
+        change: 0.00,
+        customer: {
+          name: "Sample Customer",
+          phone: "+1234567890",
+          email: "customer@example.com"
+        },
+        business: {
+          name: "Your Business Name",
+          address: "123 Business Street, City, Country",
+          phone: "+1234567890",
+          email: "info@yourbusiness.com"
+        }
+      };
+
+      // Print the template based on type
       switch (templateId) {
         case "delivery":
-          // For delivery notes, create a custom print function that prints the form data as-is
-          // Create a temporary HTML document with the delivery note content
-          const printWindow = window.open('', '_blank');
-          if (printWindow) {
-            const printContent = `
-              <!DOCTYPE html>
-              <html>
-                <head>
-                  <title>Delivery Note ${deliveryData.deliveryNoteNumber}</title>
-                  <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    .header { text-align: center; margin-bottom: 20px; }
-                    .section { margin-bottom: 20px; }
-                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-                    .border-box { border: 1px solid #ccc; padding: 10px; }
-                    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-                    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-                    th { background-color: #f5f5f5; }
-                  </style>
-                </head>
-                <body>
-                  <div class="header">
-                    <h1>DELIVERY NOTE</h1>
-                    <h2>${deliveryData.businessName}</h2>
-                    <p>${deliveryData.businessAddress}</p>
-                    <p>Phone: ${deliveryData.businessPhone} | Email: ${deliveryData.businessEmail}</p>
-                  </div>
-                  
-                  <div class="grid">
-                    <div class="border-box">
-                      <h3>TO:</h3>
-                      <p><strong>${deliveryData.customerName}</strong></p>
-                      <p>${deliveryData.customerAddress1}</p>
-                      <p>${deliveryData.customerAddress2}</p>
-                      <p>Phone: ${deliveryData.customerPhone}</p>
-                      <p>Email: ${deliveryData.customerEmail}</p>
-                    </div>
-                    
-                    <div class="border-box">
-                      <h3>DELIVERY DETAILS:</h3>
-                      <p><strong>Delivery Note #:</strong> ${deliveryData.deliveryNoteNumber}</p>
-                      <p><strong>Date:</strong> ${deliveryData.date}</p>
-                      <p><strong>Delivery Date:</strong> ${deliveryData.deliveryDate}</p>
-                      <p><strong>Vehicle #:</strong> ${deliveryData.vehicleNumber}</p>
-                      <p><strong>Driver:</strong> ${deliveryData.driver}</p>
-                    </div>
-                  </div>
-                  
-                  <div class="section">
-                    <h3>ITEMS DELIVERED:</h3>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Item Description</th>
-                          <th>Quantity</th>
-                          <th>Unit</th>
-                          <th>Delivered</th>
-                          <th>Remarks</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${deliveryData.items.map(item => `
-                          <tr>
-                            <td>${item.description}</td>
-                            <td>${item.quantity}</td>
-                            <td>${item.unit}</td>
-                            <td>${item.delivered}</td>
-                            <td>${item.remarks}</td>
-                          </tr>
-                        `).join('')}
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  <div class="grid">
-                    <div>
-                      <h3>DELIVERY NOTES:</h3>
-                      <div class="border-box" style="min-height: 60px;">${deliveryData.deliveryNotes}</div>
-                    </div>
-                    
-                    <div>
-                      <p><strong>Total Items:</strong> ${deliveryData.totalItems}</p>
-                      <p><strong>Total Quantity:</strong> ${deliveryData.totalQuantity}</p>
-                      <p><strong>Total Packages:</strong> ${deliveryData.totalPackages}</p>
-                    </div>
-                  </div>
-                  
-                  <div class="grid" style="margin-top: 40px;">
-                    <div style="text-align: center;">
-                      <p><strong>Prepared By</strong></p>
-                      <p>Name: ${deliveryData.preparedByName}</p>
-                      <p>Date: ${deliveryData.preparedByDate}</p>
-                    </div>
-                    <div style="text-align: center;">
-                      <p><strong>Driver Signature</strong></p>
-                      <p>Name: ${deliveryData.driverSignatureName}</p>
-                      <p>Date: ${deliveryData.driverSignatureDate}</p>
-                    </div>
-                    <div style="text-align: center;">
-                      <p><strong>Received By</strong></p>
-                      <p>Name: ${deliveryData.receivedByName}</p>
-                      <p>Date: ${deliveryData.receivedByDate}</p>
-                      <p>(Signature Required)</p>
-                    </div>
-                  </div>
-                </body>
-              </html>
-            `;
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => {
-              printWindow.print();
-              printWindow.close();
-            }, 250);
-          }
+          PrintUtils.printReceipt(mockTransaction);
           break;
         case "order":
-          // Create a purchase order object from form data
-          const purchaseOrderData = {
-            orderNumber: orderData.orderNumber,
-            date: new Date(orderData.date).toISOString(),
-            supplier: {
-              name: orderData.vendorName || "",
-              address: orderData.vendorAddress || "",
-              city: orderData.vendorCity || "",
-              phone: orderData.vendorPhone || "",
-              contact: orderData.vendorContact || ""
-            },
-            items: orderData.items.map(item => ({
-              productName: item.description || "",
-              quantity: parseInt(item.quantity) || 0,
-              unitPrice: parseFloat(item.rate) || 0,
-              total: parseFloat(item.amount) || 0
-            })),
-            total: orderData.items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0)
-          };
-          // Use the purchase order print function
-          PrintUtils.printPurchaseOrder(purchaseOrderData);
+          PrintUtils.printReceipt(mockTransaction);
           break;
         case "contract":
-          alert("Printing for Contract Template is not yet implemented. Please implement the specific print function for this template type.");
+          PrintUtils.printReceipt(mockTransaction);
           break;
         case "invoice":
-          alert("Printing for Invoice Template is not yet implemented. Please implement the specific print function for this template type.");
+          PrintUtils.printReceipt(mockTransaction);
           break;
         case "receipt":
-          alert("Printing for Receipt Template is not yet implemented. Please implement the specific print function for this template type.");
+          PrintUtils.printReceipt(mockTransaction);
           break;
         case "notice":
-          alert("Printing for Notice Template is not yet implemented. Please implement the specific print function for this template type.");
+          PrintUtils.printReceipt(mockTransaction);
           break;
         case "quote":
-          alert("Printing for Quotation Template is not yet implemented. Please implement the specific print function for this template type.");
+          PrintUtils.printReceipt(mockTransaction);
           break;
         case "report":
-          alert("Printing for Report Template is not yet implemented. Please implement the specific print function for this template type.");
+          PrintUtils.printReceipt(mockTransaction);
           break;
         default:
-          alert(`Printing for ${templates.find(t => t.id === templateId)?.name || 'Unknown Template'} is not yet implemented. Please implement the specific print function for this template type.`);
+          PrintUtils.printReceipt(mockTransaction);
       }
 
       toast({
@@ -484,27 +1159,27 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <h1 className="text-3xl font-bold text-gray-800">DELIVERY NOTE</h1>
               <div className="mt-2 text-sm">
                 <Input 
-                  className="font-semibold text-gray-700 text-center mb-1" 
-                  value={deliveryData.businessName} 
-                  onChange={(e) => handleDeliveryChange('businessName', e.target.value)} 
+                  className="font-semibold text-gray-700 w-full text-center" 
+                  value={deliveryNoteData.businessName} 
+                  onChange={(e) => handleDeliveryNoteChange('businessName', e.target.value)} 
                 />
                 <Input 
-                  className="text-gray-600 text-center mb-1" 
-                  value={deliveryData.businessAddress} 
-                  onChange={(e) => handleDeliveryChange('businessAddress', e.target.value)} 
+                  className="text-gray-600 w-full text-center" 
+                  value={deliveryNoteData.businessAddress} 
+                  onChange={(e) => handleDeliveryNoteChange('businessAddress', e.target.value)} 
                 />
                 <div className="text-gray-600 text-center">
                   Phone: 
                   <Input 
-                    className="inline-block w-32 mx-1" 
-                    value={deliveryData.businessPhone} 
-                    onChange={(e) => handleDeliveryChange('businessPhone', e.target.value)} 
+                    className="inline-block w-40 ml-1" 
+                    value={deliveryNoteData.businessPhone} 
+                    onChange={(e) => handleDeliveryNoteChange('businessPhone', e.target.value)} 
                   />
                   | Email: 
                   <Input 
-                    className="inline-block w-32 mx-1" 
-                    value={deliveryData.businessEmail} 
-                    onChange={(e) => handleDeliveryChange('businessEmail', e.target.value)} 
+                    className="inline-block w-40 ml-1" 
+                    value={deliveryNoteData.businessEmail} 
+                    onChange={(e) => handleDeliveryNoteChange('businessEmail', e.target.value)} 
                   />
                 </div>
               </div>
@@ -513,39 +1188,31 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div className="border border-gray-300 p-4 rounded">
                 <h3 className="font-bold text-gray-800 mb-2">TO:</h3>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-1 text-sm">
                   <Input 
-                    className="font-medium" 
-                    placeholder="Customer Name" 
-                    value={deliveryData.customerName} 
-                    onChange={(e) => handleDeliveryChange('customerName', e.target.value)} 
+                    className="font-medium w-full" 
+                    value={deliveryNoteData.customerName} 
+                    onChange={(e) => handleDeliveryNoteChange('customerName', e.target.value)} 
                   />
-                  <Input 
-                    placeholder="Customer Address Line 1" 
-                    value={deliveryData.customerAddress1} 
-                    onChange={(e) => handleDeliveryChange('customerAddress1', e.target.value)} 
-                  />
-                  <Input 
-                    placeholder="Customer Address Line 2" 
-                    value={deliveryData.customerAddress2} 
-                    onChange={(e) => handleDeliveryChange('customerAddress2', e.target.value)} 
+                  <Textarea 
+                    className="w-full" 
+                    value={deliveryNoteData.customerAddress} 
+                    onChange={(e) => handleDeliveryNoteChange('customerAddress', e.target.value)} 
                   />
                   <div>
                     Phone: 
                     <Input 
                       className="inline-block w-32 ml-1" 
-                      placeholder="Phone" 
-                      value={deliveryData.customerPhone} 
-                      onChange={(e) => handleDeliveryChange('customerPhone', e.target.value)} 
+                      value={deliveryNoteData.customerPhone} 
+                      onChange={(e) => handleDeliveryNoteChange('customerPhone', e.target.value)} 
                     />
                   </div>
                   <div>
                     Email: 
                     <Input 
-                      className="inline-block w-32 ml-1" 
-                      placeholder="Email" 
-                      value={deliveryData.customerEmail} 
-                      onChange={(e) => handleDeliveryChange('customerEmail', e.target.value)} 
+                      className="inline-block w-40 ml-1" 
+                      value={deliveryNoteData.customerEmail} 
+                      onChange={(e) => handleDeliveryNoteChange('customerEmail', e.target.value)} 
                     />
                   </div>
                 </div>
@@ -553,48 +1220,45 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               
               <div className="border border-gray-300 p-4 rounded">
                 <h3 className="font-bold text-gray-800 mb-2">DELIVERY DETAILS:</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between items-center">
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
                     <span className="font-medium">Delivery Note #:</span>
                     <Input 
-                      className="w-32" 
-                      value={deliveryData.deliveryNoteNumber} 
-                      onChange={(e) => handleDeliveryChange('deliveryNoteNumber', e.target.value)} 
+                      className="w-24 text-right" 
+                      value={deliveryNoteData.deliveryNoteNumber} 
+                      onChange={(e) => handleDeliveryNoteChange('deliveryNoteNumber', e.target.value)} 
                     />
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between">
                     <span className="font-medium">Date:</span>
                     <Input 
-                      className="w-32" 
-                      value={deliveryData.date} 
-                      onChange={(e) => handleDeliveryChange('date', e.target.value)} 
+                      className="w-32 text-right" 
+                      value={deliveryNoteData.deliveryDate} 
+                      onChange={(e) => handleDeliveryNoteChange('deliveryDate', e.target.value)} 
                     />
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between">
                     <span className="font-medium">Delivery Date:</span>
                     <Input 
-                      className="w-32" 
-                      placeholder="Delivery Date" 
-                      value={deliveryData.deliveryDate} 
-                      onChange={(e) => handleDeliveryChange('deliveryDate', e.target.value)} 
+                      className="w-24 text-right" 
+                      value={deliveryNoteData.deliveryDetailsDate} 
+                      onChange={(e) => handleDeliveryNoteChange('deliveryDetailsDate', e.target.value)} 
                     />
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between">
                     <span className="font-medium">Vehicle #:</span>
                     <Input 
-                      className="w-32" 
-                      placeholder="Vehicle #" 
-                      value={deliveryData.vehicleNumber} 
-                      onChange={(e) => handleDeliveryChange('vehicleNumber', e.target.value)} 
+                      className="w-24 text-right" 
+                      value={deliveryNoteData.vehicleNumber} 
+                      onChange={(e) => handleDeliveryNoteChange('vehicleNumber', e.target.value)} 
                     />
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between">
                     <span className="font-medium">Driver:</span>
                     <Input 
-                      className="w-32" 
-                      placeholder="Driver Name" 
-                      value={deliveryData.driver} 
-                      onChange={(e) => handleDeliveryChange('driver', e.target.value)} 
+                      className="w-24 text-right" 
+                      value={deliveryNoteData.driverName} 
+                      onChange={(e) => handleDeliveryNoteChange('driverName', e.target.value)} 
                     />
                   </div>
                 </div>
@@ -614,40 +1278,40 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                   </tr>
                 </thead>
                 <tbody>
-                  {deliveryData.items.map((item, index) => (
+                  {deliveryNoteData.items.map((item, index) => (
                     <tr key={index}>
                       <td className="border border-gray-300 px-3 py-2 text-sm">
                         <Input 
                           value={item.description} 
-                          onChange={(e) => handleDeliveryItemChange(index, 'description', e.target.value)} 
+                          onChange={(e) => handleDeliveryNoteItemChange(index, 'description', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-center text-sm">
                         <Input 
-                          className="text-center" 
+                          className="text-center w-16" 
                           value={item.quantity} 
-                          onChange={(e) => handleDeliveryItemChange(index, 'quantity', e.target.value)} 
+                          onChange={(e) => handleDeliveryNoteItemChange(index, 'quantity', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-center text-sm">
                         <Input 
-                          className="text-center" 
+                          className="text-center w-16" 
                           value={item.unit} 
-                          onChange={(e) => handleDeliveryItemChange(index, 'unit', e.target.value)} 
+                          onChange={(e) => handleDeliveryNoteItemChange(index, 'unit', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-center text-sm">
                         <Input 
-                          className="text-center" 
+                          className="text-center w-16" 
                           value={item.delivered} 
-                          onChange={(e) => handleDeliveryItemChange(index, 'delivered', e.target.value)} 
+                          onChange={(e) => handleDeliveryNoteItemChange(index, 'delivered', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-right text-sm">
                         <Input 
                           className="text-right" 
                           value={item.remarks} 
-                          onChange={(e) => handleDeliveryItemChange(index, 'remarks', e.target.value)} 
+                          onChange={(e) => handleDeliveryNoteItemChange(index, 'remarks', e.target.value)} 
                         />
                       </td>
                     </tr>
@@ -659,7 +1323,7 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                 variant="outline" 
                 size="sm" 
                 className="mt-2" 
-                onClick={addDeliveryItem}
+                onClick={addDeliveryNoteItem}
               >
                 Add Item
               </Button>
@@ -669,39 +1333,35 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">DELIVERY NOTES:</h3>
                 <Textarea 
-                  className="border border-gray-300 h-24 p-2 text-sm" 
-                  placeholder="Enter delivery notes..." 
-                  value={deliveryData.deliveryNotes} 
-                  onChange={(e) => handleDeliveryChange('deliveryNotes', e.target.value)} 
+                  className="border border-gray-300 h-24 p-2 text-sm w-full" 
+                  value={deliveryNoteData.deliveryNotes} 
+                  onChange={(e) => handleDeliveryNoteChange('deliveryNotes', e.target.value)} 
                 />
               </div>
               
               <div>
-                <div className="flex justify-between mb-1 items-center">
+                <div className="flex justify-between mb-1">
                   <span className="font-medium text-sm">Total Items:</span>
                   <Input 
-                    className="w-20 text-sm" 
-                    placeholder="Total Items" 
-                    value={deliveryData.totalItems} 
-                    onChange={(e) => handleDeliveryChange('totalItems', e.target.value)} 
+                    className="w-16 text-right" 
+                    value={deliveryNoteData.totalItems} 
+                    onChange={(e) => handleDeliveryNoteChange('totalItems', e.target.value)} 
                   />
                 </div>
-                <div className="flex justify-between mb-1 items-center">
+                <div className="flex justify-between mb-1">
                   <span className="font-medium text-sm">Total Quantity:</span>
                   <Input 
-                    className="w-20 text-sm" 
-                    placeholder="Total Quantity" 
-                    value={deliveryData.totalQuantity} 
-                    onChange={(e) => handleDeliveryChange('totalQuantity', e.target.value)} 
+                    className="w-24 text-right" 
+                    value={deliveryNoteData.totalQuantity} 
+                    onChange={(e) => handleDeliveryNoteChange('totalQuantity', e.target.value)} 
                   />
                 </div>
-                <div className="flex justify-between font-bold mt-2 pt-2 border-t border-gray-300 items-center">
+                <div className="flex justify-between font-bold mt-2 pt-2 border-t border-gray-300">
                   <span className="text-sm">Total Packages:</span>
                   <Input 
-                    className="w-20 text-sm" 
-                    placeholder="Total Packages" 
-                    value={deliveryData.totalPackages} 
-                    onChange={(e) => handleDeliveryChange('totalPackages', e.target.value)} 
+                    className="w-16 text-right" 
+                    value={deliveryNoteData.totalPackages} 
+                    onChange={(e) => handleDeliveryNoteChange('totalPackages', e.target.value)} 
                   />
                 </div>
               </div>
@@ -711,70 +1371,58 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div className="text-center">
                 <div className="border-t border-gray-400 pt-2 mt-12 text-sm">
                   <p>Prepared By</p>
-                  <div className="mt-1">
-                    Name: 
+                  <p className="mt-1">Name: 
                     <Input 
-                      className="inline-block w-32 mx-1" 
-                      placeholder="Prepared By Name" 
-                      value={deliveryData.preparedByName} 
-                      onChange={(e) => handleDeliveryChange('preparedByName', e.target.value)} 
+                      className="inline-block w-32 ml-1" 
+                      value={deliveryNoteData.preparedByName} 
+                      onChange={(e) => handleDeliveryNoteChange('preparedByName', e.target.value)} 
                     />
-                  </div>
-                  <div>
-                    Date: 
+                  </p>
+                  <p>Date: 
                     <Input 
-                      className="inline-block w-32 mx-1" 
-                      placeholder="Date" 
-                      value={deliveryData.preparedByDate} 
-                      onChange={(e) => handleDeliveryChange('preparedByDate', e.target.value)} 
+                      className="inline-block w-24 ml-1" 
+                      value={deliveryNoteData.preparedByDate} 
+                      onChange={(e) => handleDeliveryNoteChange('preparedByDate', e.target.value)} 
                     />
-                  </div>
+                  </p>
                 </div>
               </div>
               <div className="text-center">
                 <div className="border-t border-gray-400 pt-2 mt-12 text-sm">
                   <p>Driver Signature</p>
-                  <div className="mt-1">
-                    Name: 
+                  <p className="mt-1">Name: 
                     <Input 
-                      className="inline-block w-32 mx-1" 
-                      placeholder="Driver Name" 
-                      value={deliveryData.driverSignatureName} 
-                      onChange={(e) => handleDeliveryChange('driverSignatureName', e.target.value)} 
+                      className="inline-block w-32 ml-1" 
+                      value={deliveryNoteData.driverSignatureName} 
+                      onChange={(e) => handleDeliveryNoteChange('driverSignatureName', e.target.value)} 
                     />
-                  </div>
-                  <div>
-                    Date: 
+                  </p>
+                  <p>Date: 
                     <Input 
-                      className="inline-block w-32 mx-1" 
-                      placeholder="Date" 
-                      value={deliveryData.driverSignatureDate} 
-                      onChange={(e) => handleDeliveryChange('driverSignatureDate', e.target.value)} 
+                      className="inline-block w-24 ml-1" 
+                      value={deliveryNoteData.driverSignatureDate} 
+                      onChange={(e) => handleDeliveryNoteChange('driverSignatureDate', e.target.value)} 
                     />
-                  </div>
+                  </p>
                 </div>
               </div>
               <div className="text-center">
                 <div className="border-t border-gray-400 pt-2 mt-12 text-sm">
                   <p>Received By</p>
-                  <div className="mt-1">
-                    Name: 
+                  <p className="mt-1">Name: 
                     <Input 
-                      className="inline-block w-32 mx-1" 
-                      placeholder="Received By Name" 
-                      value={deliveryData.receivedByName} 
-                      onChange={(e) => handleDeliveryChange('receivedByName', e.target.value)} 
+                      className="inline-block w-32 ml-1" 
+                      value={deliveryNoteData.receivedByName} 
+                      onChange={(e) => handleDeliveryNoteChange('receivedByName', e.target.value)} 
                     />
-                  </div>
-                  <div>
-                    Date: 
+                  </p>
+                  <p>Date: 
                     <Input 
-                      className="inline-block w-32 mx-1" 
-                      placeholder="Date" 
-                      value={deliveryData.receivedByDate} 
-                      onChange={(e) => handleDeliveryChange('receivedByDate', e.target.value)} 
+                      className="inline-block w-24 ml-1" 
+                      value={deliveryNoteData.receivedByDate} 
+                      onChange={(e) => handleDeliveryNoteChange('receivedByDate', e.target.value)} 
                     />
-                  </div>
+                  </p>
                   <p className="mt-2">(Signature Required)</p>
                 </div>
               </div>
@@ -793,9 +1441,9 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                 <div className="border-2 border-blue-800 p-2 rounded">
                   <p className="font-bold text-blue-800">ORDER #</p>
                   <Input 
-                    className="text-xl font-bold w-32 text-center" 
-                    value={orderData.orderNumber} 
-                    onChange={(e) => handleOrderChange('orderNumber', e.target.value)} 
+                    className="text-xl font-bold w-full text-right" 
+                    value={orderFormData.orderNumber} 
+                    onChange={(e) => handleOrderFormChange('orderNumber', e.target.value)} 
                   />
                 </div>
               </div>
@@ -804,39 +1452,31 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">VENDOR:</h3>
-                <div className="bg-gray-50 p-3 rounded border space-y-2">
+                <div className="bg-gray-50 p-3 rounded border">
                   <Input 
-                    className="font-bold" 
-                    placeholder="Vendor Name" 
-                    value={orderData.vendorName} 
-                    onChange={(e) => handleOrderChange('vendorName', e.target.value)} 
+                    className="font-bold w-full" 
+                    value={orderFormData.supplierName} 
+                    onChange={(e) => handleOrderFormChange('supplierName', e.target.value)} 
                   />
                   <Input 
-                    placeholder="Vendor Address" 
-                    value={orderData.vendorAddress} 
-                    onChange={(e) => handleOrderChange('vendorAddress', e.target.value)} 
-                  />
-                  <Input 
-                    placeholder="Vendor City, State ZIP" 
-                    value={orderData.vendorCity} 
-                    onChange={(e) => handleOrderChange('vendorCity', e.target.value)} 
+                    className="w-full" 
+                    value={orderFormData.supplierAddress} 
+                    onChange={(e) => handleOrderFormChange('supplierAddress', e.target.value)} 
                   />
                   <div>
                     Phone: 
                     <Input 
                       className="inline-block w-32 ml-1" 
-                      placeholder="Phone" 
-                      value={orderData.vendorPhone} 
-                      onChange={(e) => handleOrderChange('vendorPhone', e.target.value)} 
+                      value={orderFormData.supplierPhone} 
+                      onChange={(e) => handleOrderFormChange('supplierPhone', e.target.value)} 
                     />
                   </div>
                   <div>
                     Contact: 
                     <Input 
                       className="inline-block w-32 ml-1" 
-                      placeholder="Contact Person" 
-                      value={orderData.vendorContact} 
-                      onChange={(e) => handleOrderChange('vendorContact', e.target.value)} 
+                      value={orderFormData.supplierContact} 
+                      onChange={(e) => handleOrderFormChange('supplierContact', e.target.value)} 
                     />
                   </div>
                 </div>
@@ -844,34 +1484,31 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">SHIP TO:</h3>
-                <div className="bg-gray-50 p-3 rounded border space-y-2">
+                <div className="bg-gray-50 p-3 rounded border">
                   <Input 
-                    className="font-bold" 
-                    value={orderData.shipToName} 
-                    onChange={(e) => handleOrderChange('shipToName', e.target.value)} 
+                    className="font-bold w-full" 
+                    value={orderFormData.businessName} 
+                    onChange={(e) => handleOrderFormChange('businessName', e.target.value)} 
                   />
                   <Input 
-                    value={orderData.shipToAddress} 
-                    onChange={(e) => handleOrderChange('shipToAddress', e.target.value)} 
-                  />
-                  <Input 
-                    value={orderData.shipToCity} 
-                    onChange={(e) => handleOrderChange('shipToCity', e.target.value)} 
+                    className="w-full" 
+                    value={orderFormData.businessAddress} 
+                    onChange={(e) => handleOrderFormChange('businessAddress', e.target.value)} 
                   />
                   <div>
                     Phone: 
                     <Input 
                       className="inline-block w-32 ml-1" 
-                      value={orderData.shipToPhone} 
-                      onChange={(e) => handleOrderChange('shipToPhone', e.target.value)} 
+                      value={orderFormData.businessPhone} 
+                      onChange={(e) => handleOrderFormChange('businessPhone', e.target.value)} 
                     />
                   </div>
                   <div>
                     Contact: 
                     <Input 
                       className="inline-block w-32 ml-1" 
-                      value={orderData.shipToContact} 
-                      onChange={(e) => handleOrderChange('shipToContact', e.target.value)} 
+                      value={orderFormData.businessContact} 
+                      onChange={(e) => handleOrderFormChange('businessContact', e.target.value)} 
                     />
                   </div>
                 </div>
@@ -883,33 +1520,32 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                 <p className="text-xs text-gray-500">DATE</p>
                 <Input 
                   className="font-medium w-full" 
-                  value={orderData.date} 
-                  onChange={(e) => handleOrderChange('date', e.target.value)} 
+                  value={orderFormData.orderDate} 
+                  onChange={(e) => handleOrderFormChange('orderDate', e.target.value)} 
                 />
               </div>
               <div>
                 <p className="text-xs text-gray-500">REQUIRED BY</p>
                 <Input 
                   className="font-medium w-full" 
-                  placeholder="Required By" 
-                  value={orderData.requiredBy} 
-                  onChange={(e) => handleOrderChange('requiredBy', e.target.value)} 
+                  value={orderFormData.requiredBy} 
+                  onChange={(e) => handleOrderFormChange('requiredBy', e.target.value)} 
                 />
               </div>
               <div>
                 <p className="text-xs text-gray-500">PAYMENT TERMS</p>
                 <Input 
                   className="font-medium w-full" 
-                  value={orderData.paymentTerms} 
-                  onChange={(e) => handleOrderChange('paymentTerms', e.target.value)} 
+                  value={orderFormData.paymentTerms} 
+                  onChange={(e) => handleOrderFormChange('paymentTerms', e.target.value)} 
                 />
               </div>
               <div>
                 <p className="text-xs text-gray-500">SHIP VIA</p>
                 <Input 
                   className="font-medium w-full" 
-                  value={orderData.shipVia} 
-                  onChange={(e) => handleOrderChange('shipVia', e.target.value)} 
+                  value={orderFormData.shipVia} 
+                  onChange={(e) => handleOrderFormChange('shipVia', e.target.value)} 
                 />
               </div>
             </div>
@@ -928,58 +1564,104 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                   </tr>
                 </thead>
                 <tbody>
-                  {orderData.items.map((item, index) => (
+                  {orderFormData.items.map((item, index) => (
                     <tr key={index}>
                       <td className="border border-gray-300 px-3 py-2 text-sm">
                         <Input 
-                          value={item.number} 
-                          onChange={(e) => handleOrderItemChange(index, 'number', e.target.value)} 
+                          value={item.itemNumber} 
+                          onChange={(e) => handleOrderFormItemChange(index, 'itemNumber', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-sm">
                         <Input 
                           value={item.description} 
-                          onChange={(e) => handleOrderItemChange(index, 'description', e.target.value)} 
+                          onChange={(e) => handleOrderFormItemChange(index, 'description', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-center text-sm">
                         <Input 
-                          className="text-center" 
+                          className="text-center w-12" 
                           value={item.quantity} 
-                          onChange={(e) => handleOrderItemChange(index, 'quantity', e.target.value)} 
+                          onChange={(e) => handleOrderFormItemChange(index, 'quantity', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-center text-sm">
                         <Input 
-                          className="text-center" 
+                          className="text-center w-12" 
                           value={item.unit} 
-                          onChange={(e) => handleOrderItemChange(index, 'unit', e.target.value)} 
+                          onChange={(e) => handleOrderFormItemChange(index, 'unit', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-right text-sm">
                         <Input 
-                          className="text-right" 
-                          value={item.rate} 
-                          onChange={(e) => handleOrderItemChange(index, 'rate', e.target.value)} 
+                          className="text-right w-20" 
+                          value={item.unitPrice} 
+                          onChange={(e) => handleOrderFormItemChange(index, 'unitPrice', e.target.value)} 
                         />
                       </td>
                       <td className="border border-gray-300 px-3 py-2 text-right text-sm">
                         <Input 
-                          className="text-right" 
-                          value={item.amount} 
-                          onChange={(e) => handleOrderItemChange(index, 'amount', e.target.value)} 
+                          className="text-right w-20" 
+                          value={item.total} 
+                          onChange={(e) => handleOrderFormItemChange(index, 'total', e.target.value)} 
                         />
                       </td>
                     </tr>
                   ))}
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">SUBTOTAL</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="text-right w-20" 
+                        value={orderFormData.subtotal} 
+                        onChange={(e) => handleOrderFormChange('subtotal', e.target.value)} 
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">TAX (8.5%)</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="text-right w-20" 
+                        value={orderFormData.tax} 
+                        onChange={(e) => handleOrderFormChange('tax', e.target.value)} 
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">SHIPPING</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="text-right w-20" 
+                        value={orderFormData.shipping} 
+                        onChange={(e) => handleOrderFormChange('shipping', e.target.value)} 
+                      />
+                    </td>
+                  </tr>
+                  <tr className="bg-blue-50">
+                    <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-lg">TOTAL</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-lg">
+                      <Input 
+                        className="text-right w-20 font-bold" 
+                        value={orderFormData.total} 
+                        onChange={(e) => handleOrderFormChange('total', e.target.value)} 
+                      />
+                    </td>
+                  </tr>
+                </tfoot>
               </table>
               <Button 
                 type="button" 
                 variant="outline" 
                 size="sm" 
                 className="mt-2" 
-                onClick={addOrderItem}
+                onClick={addOrderFormItem}
               >
                 Add Item
               </Button>
@@ -989,20 +1671,18 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">SPECIAL INSTRUCTIONS:</h3>
                 <Textarea 
-                  className="border border-gray-300 h-20 p-2 text-sm" 
-                  placeholder="Special instructions..." 
-                  value={orderData.notes} 
-                  onChange={(e) => handleOrderChange('notes', e.target.value)} 
+                  className="border border-gray-300 h-20 p-2 text-sm w-full" 
+                  value={orderFormData.specialInstructions} 
+                  onChange={(e) => handleOrderFormChange('specialInstructions', e.target.value)} 
                 />
               </div>
               
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">APPROVAL:</h3>
                 <Textarea 
-                  className="border border-gray-300 h-20 p-2 text-sm" 
-                  placeholder="Approval notes..." 
-                  value={orderData.approvalNotes || ''} 
-                  onChange={(e) => handleOrderChange('approvalNotes', e.target.value)} 
+                  className="border border-gray-300 h-20 p-2 text-sm w-full" 
+                  value={orderFormData.approval} 
+                  onChange={(e) => handleOrderFormChange('approval', e.target.value)} 
                 />
               </div>
             </div>
@@ -1011,52 +1691,53 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div className="text-center">
                 <div className="pt-2 text-sm">
                   <p className="font-bold">REQUESTED BY</p>
-                  <div className="mt-8">
+                  <p className="mt-8">
                     <Input 
-                      className="w-full text-center mb-1" 
-                      placeholder="Name" 
-                      value={orderData.requestedByName} 
-                      onChange={(e) => handleOrderChange('requestedByName', e.target.value)} 
+                      className="w-48 text-center" 
+                      value={orderFormData.requestedByName} 
+                      onChange={(e) => handleOrderFormChange('requestedByName', e.target.value)} 
                     />
+                  </p>
+                  <p>
                     <Input 
-                      className="w-full text-center" 
-                      placeholder="Title" 
-                      value={orderData.requestedByTitle} 
-                      onChange={(e) => handleOrderChange('requestedByTitle', e.target.value)} 
+                      className="w-48 text-center" 
+                      value={orderFormData.requestedByTitle} 
+                      onChange={(e) => handleOrderFormChange('requestedByTitle', e.target.value)} 
+                      placeholder="Name & Title"
                     />
-                  </div>
+                  </p>
                 </div>
               </div>
               <div className="text-center">
                 <div className="pt-2 text-sm">
                   <p className="font-bold">APPROVED BY</p>
-                  <div className="mt-8">
+                  <p className="mt-8">
                     <Input 
-                      className="w-full text-center mb-1" 
-                      placeholder="Name" 
-                      value={orderData.approvedByName} 
-                      onChange={(e) => handleOrderChange('approvedByName', e.target.value)} 
+                      className="w-48 text-center" 
+                      value={orderFormData.approvedByName} 
+                      onChange={(e) => handleOrderFormChange('approvedByName', e.target.value)} 
                     />
+                  </p>
+                  <p>
                     <Input 
-                      className="w-full text-center" 
-                      placeholder="Title" 
-                      value={orderData.approvedByTitle} 
-                      onChange={(e) => handleOrderChange('approvedByTitle', e.target.value)} 
+                      className="w-48 text-center" 
+                      value={orderFormData.approvedByTitle} 
+                      onChange={(e) => handleOrderFormChange('approvedByTitle', e.target.value)} 
+                      placeholder="Name & Title"
                     />
-                  </div>
+                  </p>
                 </div>
               </div>
               <div className="text-center">
                 <div className="pt-2 text-sm">
                   <p className="font-bold">DATE</p>
-                  <div className="mt-8">
+                  <p className="mt-8">
                     <Input 
-                      className="w-full text-center" 
-                      placeholder="Date" 
-                      value={orderData.approvalDate} 
-                      onChange={(e) => handleOrderChange('approvalDate', e.target.value)} 
+                      className="w-48 text-center" 
+                      value={orderFormData.approvalDate} 
+                      onChange={(e) => handleOrderFormChange('approvalDate', e.target.value)} 
                     />
-                  </div>
+                  </p>
                 </div>
               </div>
             </div>
@@ -1067,7 +1748,13 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
           <div className="p-8 max-w-4xl mx-auto bg-white">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-800 border-b-2 border-gray-800 pb-4">SERVICE AGREEMENT CONTRACT</h1>
-              <p className="text-lg mt-4">This Agreement is made and entered into on {new Date().toLocaleDateString()}</p>
+              <p className="text-lg mt-4">This Agreement is made and entered into on 
+                <Input 
+                  className="inline-block w-48" 
+                  value={contractData.agreementDate} 
+                  onChange={(e) => handleContractChange('agreementDate', e.target.value)} 
+                />
+              </p>
             </div>
             
             <div className="mb-8">
@@ -1075,21 +1762,85 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div className="grid grid-cols-2 gap-6">
                 <div className="border border-gray-300 p-4 rounded">
                   <h3 className="font-bold text-gray-700 mb-2">CLIENT:</h3>
-                  <p className="font-semibold">Client Company Name</p>
-                  <p>Address: Client Address Line 1</p>
-                  <p>City, State ZIP Code</p>
-                  <p>Contact: Client Contact Person</p>
-                  <p>Phone: (555) 123-4567</p>
-                  <p>Email: client@example.com</p>
+                  <Input 
+                    className="font-semibold w-full mb-1" 
+                    value={contractData.clientName} 
+                    onChange={(e) => handleContractChange('clientName', e.target.value)} 
+                  />
+                  <div>Address: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={contractData.clientAddress} 
+                      onChange={(e) => handleContractChange('clientAddress', e.target.value)} 
+                    />
+                  </div>
+                  <Input 
+                    className="w-full mb-1" 
+                    value={contractData.clientCityStateZip} 
+                    onChange={(e) => handleContractChange('clientCityStateZip', e.target.value)} 
+                  />
+                  <div>Contact: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={contractData.clientContact} 
+                      onChange={(e) => handleContractChange('clientContact', e.target.value)} 
+                    />
+                  </div>
+                  <div>Phone: 
+                    <Input 
+                      className="inline-block w-32 ml-1" 
+                      value={contractData.clientPhone} 
+                      onChange={(e) => handleContractChange('clientPhone', e.target.value)} 
+                    />
+                  </div>
+                  <div>Email: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={contractData.clientEmail} 
+                      onChange={(e) => handleContractChange('clientEmail', e.target.value)} 
+                    />
+                  </div>
                 </div>
                 <div className="border border-gray-300 p-4 rounded">
                   <h3 className="font-bold text-gray-700 mb-2">SERVICE PROVIDER:</h3>
-                  <p className="font-semibold">Your Business Name</p>
-                  <p>Address: 123 Business Street</p>
-                  <p>City, State ZIP Code</p>
-                  <p>Contact: Service Provider Contact</p>
-                  <p>Phone: (555) 987-6543</p>
-                  <p>Email: services@yourbusiness.com</p>
+                  <Input 
+                    className="font-semibold w-full mb-1" 
+                    value={contractData.serviceProviderName} 
+                    onChange={(e) => handleContractChange('serviceProviderName', e.target.value)} 
+                  />
+                  <div>Address: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={contractData.serviceProviderAddress} 
+                      onChange={(e) => handleContractChange('serviceProviderAddress', e.target.value)} 
+                    />
+                  </div>
+                  <Input 
+                    className="w-full mb-1" 
+                    value={contractData.serviceProviderCityStateZip} 
+                    onChange={(e) => handleContractChange('serviceProviderCityStateZip', e.target.value)} 
+                  />
+                  <div>Contact: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={contractData.serviceProviderContact} 
+                      onChange={(e) => handleContractChange('serviceProviderContact', e.target.value)} 
+                    />
+                  </div>
+                  <div>Phone: 
+                    <Input 
+                      className="inline-block w-32 ml-1" 
+                      value={contractData.serviceProviderPhone} 
+                      onChange={(e) => handleContractChange('serviceProviderPhone', e.target.value)} 
+                    />
+                  </div>
+                  <div>Email: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={contractData.serviceProviderEmail} 
+                      onChange={(e) => handleContractChange('serviceProviderEmail', e.target.value)} 
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1099,19 +1850,44 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div className="border border-gray-300 p-4 rounded">
                 <p className="mb-3">The Service Provider agrees to perform the following services for the Client:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Monthly website maintenance and updates</li>
-                  <li>Technical support during business hours</li>
-                  <li>Security monitoring and updates</li>
-                  <li>Performance optimization</li>
-                  <li>Backup and recovery services</li>
+                  {contractData.services.map((service, index) => (
+                    <li key={index}>
+                      <Input 
+                        className="w-full" 
+                        value={service} 
+                        onChange={(e) => handleContractServicesChange(index, e.target.value)} 
+                      />
+                    </li>
+                  ))}
                 </ul>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2" 
+                  onClick={addContractService}
+                >
+                  Add Service
+                </Button>
               </div>
             </div>
             
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-800 mb-4">2. TERM OF AGREEMENT</h2>
               <div className="border border-gray-300 p-4 rounded">
-                <p>This Agreement shall commence on <span className="font-semibold">_________</span> and continue for a period of <span className="font-semibold">12 months</span>, unless terminated earlier in accordance with the termination clause.</p>
+                <p>This Agreement shall commence on 
+                  <Input 
+                    className="inline-block w-32 font-semibold" 
+                    value={contractData.termStartDate} 
+                    onChange={(e) => handleContractChange('termStartDate', e.target.value)} 
+                  /> 
+                  and continue for a period of 
+                  <Input 
+                    className="inline-block w-24 font-semibold" 
+                    value={contractData.termDuration} 
+                    onChange={(e) => handleContractChange('termDuration', e.target.value)} 
+                  />, unless terminated earlier in accordance with the termination clause.
+                </p>
               </div>
             </div>
             
@@ -1120,32 +1896,73 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div className="border border-gray-300 p-4 rounded">
                 <p className="mb-3">In consideration for the services provided, the Client agrees to pay the Service Provider as follows:</p>
                 <ul className="list-disc pl-6 space-y-2 mb-3">
-                  <li>Monthly fee: $1,500.00</li>
-                  <li>Payment due: Within 15 days of invoice date</li>
-                  <li>Late payment penalty: 1.5% per month</li>
+                  {contractData.compensation.map((item, index) => (
+                    <li key={index}>
+                      <Input 
+                        className="inline-block w-48" 
+                        value={item.description} 
+                        onChange={(e) => handleContractCompensationChange(index, 'description', e.target.value)} 
+                      />: 
+                      <Input 
+                        className="inline-block w-24 ml-2" 
+                        value={item.value} 
+                        onChange={(e) => handleContractCompensationChange(index, 'value', e.target.value)} 
+                      />
+                    </li>
+                  ))}
                 </ul>
-                <p>Additional services not covered in Section 1 will be billed separately at $125/hour.</p>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="mb-3" 
+                  onClick={addContractCompensationItem}
+                >
+                  Add Compensation Item
+                </Button>
+                <div>
+                  Additional services not covered in Section 1 will be billed separately at 
+                  <Input 
+                    className="inline-block w-24" 
+                    value={contractData.additionalServicesRate} 
+                    onChange={(e) => handleContractChange('additionalServicesRate', e.target.value)} 
+                  />.
+                </div>
               </div>
             </div>
             
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-800 mb-4">4. WARRANTIES AND REPRESENTATIONS</h2>
               <div className="border border-gray-300 p-4 rounded">
-                <p>The Service Provider warrants that all services will be performed in a professional and workmanlike manner. The Service Provider makes no other warranties, express or implied.</p>
+                <Textarea 
+                  className="w-full" 
+                  value={contractData.warranties} 
+                  onChange={(e) => handleContractChange('warranties', e.target.value)} 
+                />
               </div>
             </div>
             
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-800 mb-4">5. TERMINATION</h2>
               <div className="border border-gray-300 p-4 rounded">
-                <p>Either party may terminate this Agreement with 30 days written notice. Upon termination, the Client shall pay for all services rendered up to the termination date.</p>
+                <Textarea 
+                  className="w-full" 
+                  value={contractData.termination} 
+                  onChange={(e) => handleContractChange('termination', e.target.value)} 
+                />
               </div>
             </div>
             
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-800 mb-4">6. GOVERNING LAW</h2>
               <div className="border border-gray-300 p-4 rounded">
-                <p>This Agreement shall be governed by and construed in accordance with the laws of <span className="font-semibold">[State]</span>.</p>
+                <p>This Agreement shall be governed by and construed in accordance with the laws of 
+                  <Input 
+                    className="inline-block w-32 font-semibold" 
+                    value={contractData.governingLaw} 
+                    onChange={(e) => handleContractChange('governingLaw', e.target.value)} 
+                  />.
+                </p>
               </div>
             </div>
             
@@ -1153,19 +1970,67 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div>
                 <h3 className="font-bold text-gray-800 mb-4">CLIENT ACKNOWLEDGMENT</h3>
                 <div className="border-t border-gray-400 pt-4">
-                  <p className="mb-2">Signature: _________________________________</p>
-                  <p className="mb-2">Print Name: _______________________________</p>
-                  <p className="mb-2">Title: ____________________________________</p>
-                  <p>Date: ____________________________________</p>
+                  <div className="mb-2">Signature: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.clientSignature} 
+                      onChange={(e) => handleContractChange('clientSignature', e.target.value)} 
+                    />
+                  </div>
+                  <div className="mb-2">Print Name: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.clientPrintName} 
+                      onChange={(e) => handleContractChange('clientPrintName', e.target.value)} 
+                    />
+                  </div>
+                  <div className="mb-2">Title: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.clientTitle} 
+                      onChange={(e) => handleContractChange('clientTitle', e.target.value)} 
+                    />
+                  </div>
+                  <div>Date: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.clientSignatureDate} 
+                      onChange={(e) => handleContractChange('clientSignatureDate', e.target.value)} 
+                    />
+                  </div>
                 </div>
               </div>
               <div>
                 <h3 className="font-bold text-gray-800 mb-4">SERVICE PROVIDER ACKNOWLEDGMENT</h3>
                 <div className="border-t border-gray-400 pt-4">
-                  <p className="mb-2">Signature: _________________________________</p>
-                  <p className="mb-2">Print Name: _______________________________</p>
-                  <p className="mb-2">Title: ____________________________________</p>
-                  <p>Date: ____________________________________</p>
+                  <div className="mb-2">Signature: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.serviceProviderSignature} 
+                      onChange={(e) => handleContractChange('serviceProviderSignature', e.target.value)} 
+                    />
+                  </div>
+                  <div className="mb-2">Print Name: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.serviceProviderPrintName} 
+                      onChange={(e) => handleContractChange('serviceProviderPrintName', e.target.value)} 
+                    />
+                  </div>
+                  <div className="mb-2">Title: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.serviceProviderTitle} 
+                      onChange={(e) => handleContractChange('serviceProviderTitle', e.target.value)} 
+                    />
+                  </div>
+                  <div>Date: 
+                    <Input 
+                      className="inline-block w-64" 
+                      value={contractData.serviceProviderSignatureDate} 
+                      onChange={(e) => handleContractChange('serviceProviderSignatureDate', e.target.value)} 
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1181,13 +2046,28 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             <div className="flex justify-between items-start mb-8">
               <div>
                 <h1 className="text-4xl font-bold text-green-700">INVOICE</h1>
-                <p className="text-gray-600 mt-1"># INV-2024-{Math.floor(Math.random() * 10000)}</p>
+                <Input 
+                  className="text-gray-600 mt-1 w-48" 
+                  value={invoiceData.invoiceNumber} 
+                  onChange={(e) => handleInvoiceChange('invoiceNumber', e.target.value)} 
+                />
               </div>
               <div className="text-right">
                 <div className="bg-green-50 border-2 border-green-700 p-3 rounded">
                   <p className="text-green-700 font-bold">AMOUNT DUE</p>
-                  <p className="text-2xl font-bold text-green-800">$2,458.35</p>
-                  <p className="text-sm text-green-700">Due: {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                  <Input 
+                    className="text-2xl font-bold text-green-800 w-32 text-right" 
+                    value={invoiceData.balance} 
+                    onChange={(e) => handleInvoiceChange('balance', e.target.value)} 
+                  />
+                  <div className="text-sm text-green-700">
+                    Due: 
+                    <Input 
+                      className="inline-block w-24 ml-1" 
+                      value={invoiceData.dueDate} 
+                      onChange={(e) => handleInvoiceChange('dueDate', e.target.value)} 
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1196,21 +2076,65 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div>
                 <p className="font-bold text-gray-800 mb-2">FROM:</p>
                 <div className="text-sm">
-                  <p className="font-bold text-lg">Your Business Name</p>
-                  <p>123 Business Street</p>
-                  <p>Business City, State 12345</p>
-                  <p>Phone: (555) 123-4567</p>
-                  <p>Email: billing@yourbusiness.com</p>
+                  <Input 
+                    className="font-bold text-lg" 
+                    value={invoiceData.businessName} 
+                    onChange={(e) => handleInvoiceChange('businessName', e.target.value)} 
+                  />
+                  <Input 
+                    value={invoiceData.businessAddress} 
+                    onChange={(e) => handleInvoiceChange('businessAddress', e.target.value)} 
+                  />
+                  <div>
+                    Phone: 
+                    <Input 
+                      className="inline-block w-32 ml-1" 
+                      value={invoiceData.businessPhone} 
+                      onChange={(e) => handleInvoiceChange('businessPhone', e.target.value)} 
+                    />
+                  </div>
+                  <div>
+                    Email: 
+                    <Input 
+                      className="inline-block w-40 ml-1" 
+                      value={invoiceData.businessEmail} 
+                      onChange={(e) => handleInvoiceChange('businessEmail', e.target.value)} 
+                    />
+                  </div>
                 </div>
               </div>
               <div>
                 <p className="font-bold text-gray-800 mb-2">BILL TO:</p>
                 <div className="text-sm">
-                  <p className="font-bold text-lg">Client Company Name</p>
-                  <p>456 Client Avenue</p>
-                  <p>Client City, State 67890</p>
-                  <p>Phone: (555) 987-6543</p>
-                  <p>Email: accounts@clientcompany.com</p>
+                  <Input 
+                    className="font-bold text-lg" 
+                    value={invoiceData.clientName} 
+                    onChange={(e) => handleInvoiceChange('clientName', e.target.value)} 
+                  />
+                  <Input 
+                    value={invoiceData.clientAddress} 
+                    onChange={(e) => handleInvoiceChange('clientAddress', e.target.value)} 
+                  />
+                  <Input 
+                    value={invoiceData.clientCity} 
+                    onChange={(e) => handleInvoiceChange('clientCity', e.target.value)} 
+                  />
+                  <div>
+                    Phone: 
+                    <Input 
+                      className="inline-block w-32 ml-1" 
+                      value={invoiceData.clientPhone} 
+                      onChange={(e) => handleInvoiceChange('clientPhone', e.target.value)} 
+                    />
+                  </div>
+                  <div>
+                    Email: 
+                    <Input 
+                      className="inline-block w-40 ml-1" 
+                      value={invoiceData.clientEmail} 
+                      onChange={(e) => handleInvoiceChange('clientEmail', e.target.value)} 
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1218,15 +2142,27 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             <div className="grid grid-cols-3 gap-4 mb-8 bg-gray-50 p-3 rounded border">
               <div>
                 <p className="text-xs text-gray-500">INVOICE DATE</p>
-                <p className="font-medium">{new Date().toLocaleDateString()}</p>
+                <Input 
+                  className="font-medium w-full" 
+                  value={invoiceData.invoiceDate} 
+                  onChange={(e) => handleInvoiceChange('invoiceDate', e.target.value)} 
+                />
               </div>
               <div>
                 <p className="text-xs text-gray-500">DUE DATE</p>
-                <p className="font-medium">{new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                <Input 
+                  className="font-medium w-full" 
+                  value={invoiceData.dueDate} 
+                  onChange={(e) => handleInvoiceChange('dueDate', e.target.value)} 
+                />
               </div>
               <div>
                 <p className="text-xs text-gray-500">TERMS</p>
-                <p className="font-medium">Net 30</p>
+                <Input 
+                  className="font-medium w-full" 
+                  value={invoiceData.terms} 
+                  onChange={(e) => handleInvoiceChange('terms', e.target.value)} 
+                />
               </div>
             </div>
             
@@ -1238,45 +2174,84 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                     <th className="border border-gray-300 px-3 py-2 text-left text-sm font-bold">Item</th>
                     <th className="border border-gray-300 px-3 py-2 text-left text-sm font-bold">Description</th>
                     <th className="border border-gray-300 px-3 py-2 text-center text-sm font-bold">Quantity</th>
+                    <th className="border border-gray-300 px-3 py-2 text-center text-sm font-bold">Unit</th>
                     <th className="border border-gray-300 px-3 py-2 text-right text-sm font-bold">Rate</th>
                     <th className="border border-gray-300 px-3 py-2 text-right text-sm font-bold">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 text-sm font-medium">WEB-001</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">Website Design & Development</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">1</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$1,800.00</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$1,800.00</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 text-sm font-medium">SUP-002</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">Monthly Support (3 months)</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">3</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$150.00</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$450.00</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 text-sm font-medium">TRN-003</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">Staff Training Session</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">2</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$125.00</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$250.00</td>
-                  </tr>
+                  {invoiceData.items.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-300 px-3 py-2 text-sm">
+                        <Input 
+                          value={item.itemNumber} 
+                          onChange={(e) => handleInvoiceItemChange(index, 'itemNumber', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-sm">
+                        <Input 
+                          value={item.description} 
+                          onChange={(e) => handleInvoiceItemChange(index, 'description', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-center text-sm">
+                        <Input 
+                          className="text-center" 
+                          value={item.quantity} 
+                          onChange={(e) => handleInvoiceItemChange(index, 'quantity', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-center text-sm">
+                        <Input 
+                          className="text-center" 
+                          value={item.unit} 
+                          onChange={(e) => handleInvoiceItemChange(index, 'unit', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-right text-sm">
+                        <Input 
+                          className="text-right" 
+                          value={item.rate} 
+                          onChange={(e) => handleInvoiceItemChange(index, 'rate', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-right text-sm">
+                        <Input 
+                          className="text-right" 
+                          value={item.amount} 
+                          onChange={(e) => handleInvoiceItemChange(index, 'amount', e.target.value)} 
+                        />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                className="mt-2" 
+                onClick={addInvoiceItem}
+              >
+                Add Item
+              </Button>
             </div>
             
             <div className="grid grid-cols-2 gap-8">
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">NOTES:</h3>
-                <div className="border border-gray-300 p-3 rounded text-sm h-24">
-                  <p>Thank you for your business! Payment due within 30 days.</p>
-                </div>
+                <Textarea 
+                  className="border border-gray-300 p-3 rounded text-sm h-24" 
+                  value={invoiceData.notes} 
+                  onChange={(e) => handleInvoiceChange('notes', e.target.value)} 
+                />
                 <div className="mt-4">
                   <p className="text-xs text-gray-500">PAYMENT OPTIONS:</p>
-                  <p className="text-sm">Bank Transfer, Check, or Credit Card</p>
+                  <Input 
+                    className="text-sm w-full" 
+                    value={invoiceData.paymentOptions} 
+                    onChange={(e) => handleInvoiceChange('paymentOptions', e.target.value)} 
+                  />
                 </div>
               </div>
               
@@ -1285,27 +2260,63 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                   <tbody>
                     <tr>
                       <td className="text-right py-1 text-sm">Subtotal:</td>
-                      <td className="text-right py-1 text-sm w-24">$2,500.00</td>
+                      <td className="text-right py-1 text-sm w-24">
+                        <Input 
+                          className="text-right w-full" 
+                          value={invoiceData.subtotal} 
+                          onChange={(e) => handleInvoiceChange('subtotal', e.target.value)} 
+                        />
+                      </td>
                     </tr>
                     <tr>
-                      <td className="text-right py-1 text-sm">Discount (2%):</td>
-                      <td className="text-right py-1 text-sm">-$50.00</td>
+                      <td className="text-right py-1 text-sm">Discount:</td>
+                      <td className="text-right py-1 text-sm">
+                        <Input 
+                          className="text-right w-full" 
+                          value={invoiceData.discount} 
+                          onChange={(e) => handleInvoiceChange('discount', e.target.value)} 
+                        />
+                      </td>
                     </tr>
                     <tr>
-                      <td className="text-right py-1 text-sm">Tax (8.25%):</td>
-                      <td className="text-right py-1 text-sm">$195.84</td>
+                      <td className="text-right py-1 text-sm">Tax:</td>
+                      <td className="text-right py-1 text-sm">
+                        <Input 
+                          className="text-right w-full" 
+                          value={invoiceData.tax} 
+                          onChange={(e) => handleInvoiceChange('tax', e.target.value)} 
+                        />
+                      </td>
                     </tr>
                     <tr className="border-t border-gray-300">
                       <td className="text-right py-2 font-bold text-lg">TOTAL:</td>
-                      <td className="text-right py-2 font-bold text-lg text-green-700">$2,645.84</td>
+                      <td className="text-right py-2 font-bold text-lg text-green-700">
+                        <Input 
+                          className="text-right w-full font-bold text-green-700" 
+                          value={invoiceData.total} 
+                          onChange={(e) => handleInvoiceChange('total', e.target.value)} 
+                        />
+                      </td>
                     </tr>
                     <tr>
                       <td className="text-right py-1 text-sm">Amount Paid:</td>
-                      <td className="text-right py-1 text-sm">-$187.49</td>
+                      <td className="text-right py-1 text-sm">
+                        <Input 
+                          className="text-right w-full" 
+                          value={invoiceData.amountPaid} 
+                          onChange={(e) => handleInvoiceChange('amountPaid', e.target.value)} 
+                        />
+                      </td>
                     </tr>
                     <tr className="border-t border-gray-300 bg-green-50">
                       <td className="text-right py-2 font-bold">AMOUNT DUE:</td>
-                      <td className="text-right py-2 font-bold text-green-700">$2,458.35</td>
+                      <td className="text-right py-2 font-bold text-green-700">
+                        <Input 
+                          className="text-right w-full font-bold text-green-700" 
+                          value={invoiceData.balance} 
+                          onChange={(e) => handleInvoiceChange('balance', e.target.value)} 
+                        />
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -1314,7 +2325,7 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             
             <div className="mt-12 pt-6 border-t border-gray-300 text-center">
               <p className="text-sm text-gray-600">Thank you for your business!</p>
-              <p className="text-sm text-gray-600 mt-1">Please make checks payable to Your Business Name</p>
+              <p className="text-sm text-gray-600 mt-1">Please make checks payable to {invoiceData.businessName}</p>
             </div>
           </div>
         );
@@ -1322,9 +2333,24 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
         return (
           <div className="p-6 max-w-md mx-auto bg-white font-mono">
             <div className="text-center border-b-2 border-gray-800 pb-3 mb-3">
-              <h1 className="text-2xl font-bold">YOUR BUSINESS NAME</h1>
-              <p className="text-sm">123 Business Street, City, State 12345</p>
-              <p className="text-sm">Phone: (555) 123-4567</p>
+              <Input 
+                className="text-2xl font-bold w-full text-center" 
+                value={receiptData.businessName} 
+                onChange={(e) => handleReceiptChange('businessName', e.target.value)} 
+              />
+              <Input 
+                className="text-sm w-full text-center" 
+                value={receiptData.businessAddress} 
+                onChange={(e) => handleReceiptChange('businessAddress', e.target.value)} 
+              />
+              <div className="text-sm text-center">
+                Phone: 
+                <Input 
+                  className="inline-block w-32 ml-1" 
+                  value={receiptData.businessPhone} 
+                  onChange={(e) => handleReceiptChange('businessPhone', e.target.value)} 
+                />
+              </div>
             </div>
             
             <div className="text-center mb-4">
@@ -1335,16 +2361,40 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             
             <div className="grid grid-cols-2 gap-2 text-sm mb-4">
               <div>
-                <p>Receipt #: <span className="font-bold">RCT-2024-{Math.floor(Math.random() * 10000)}</span></p>
+                <p>Receipt #: 
+                  <Input 
+                    className="font-bold inline-block w-32" 
+                    value={receiptData.receiptNumber} 
+                    onChange={(e) => handleReceiptChange('receiptNumber', e.target.value)} 
+                  />
+                </p>
               </div>
               <div className="text-right">
-                <p>Date: {new Date().toLocaleDateString()}</p>
+                <p>Date: 
+                  <Input 
+                    className="inline-block w-24 text-right" 
+                    value={receiptData.date} 
+                    onChange={(e) => handleReceiptChange('date', e.target.value)} 
+                  />
+                </p>
               </div>
               <div>
-                <p>Time: {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                <p>Time: 
+                  <Input 
+                    className="inline-block w-20" 
+                    value={receiptData.time} 
+                    onChange={(e) => handleReceiptChange('time', e.target.value)} 
+                  />
+                </p>
               </div>
               <div className="text-right">
-                <p>Cashier: John D.</p>
+                <p>Cashier: 
+                  <Input 
+                    className="inline-block w-20" 
+                    value={receiptData.cashier} 
+                    onChange={(e) => handleReceiptChange('cashier', e.target.value)} 
+                  />
+                </p>
               </div>
             </div>
             
@@ -1355,53 +2405,92 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                   <span className="font-bold">AMOUNT</span>
                 </div>
               </div>
-              <div className="py-1 border-b border-gray-300">
-                <div className="flex justify-between text-sm">
-                  <span>Product 1</span>
-                  <span>$49.99</span>
+              {receiptData.items.map((item, index) => (
+                <div key={index} className="py-1 border-b border-gray-300">
+                  <div className="flex justify-between text-sm">
+                    <Input 
+                      className="w-32" 
+                      value={item.name} 
+                      onChange={(e) => handleReceiptItemChange(index, 'name', e.target.value)} 
+                    />
+                    <Input 
+                      className="w-16 text-right" 
+                      value={item.amount} 
+                      onChange={(e) => handleReceiptItemChange(index, 'amount', e.target.value)} 
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="py-1 border-b border-gray-300">
-                <div className="flex justify-between text-sm">
-                  <span>Product 2</span>
-                  <span>$29.50</span>
-                </div>
-              </div>
-              <div className="py-1 border-b border-gray-300">
-                <div className="flex justify-between text-sm">
-                  <span>Service Fee</span>
-                  <span>$15.00</span>
-                </div>
-              </div>
+              ))}
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                className="mt-2" 
+                onClick={addReceiptItem}
+              >
+                Add Item
+              </Button>
             </div>
             
             <div className="mb-4">
               <div className="flex justify-between text-sm py-1">
                 <span>SUBTOTAL:</span>
-                <span>$94.49</span>
+                <Input 
+                  className="w-16 text-right" 
+                  value={receiptData.subtotal} 
+                  onChange={(e) => handleReceiptChange('subtotal', e.target.value)} 
+                />
               </div>
               <div className="flex justify-between text-sm py-1">
                 <span>TAX (8.5%):</span>
-                <span>$8.03</span>
+                <Input 
+                  className="w-16 text-right" 
+                  value={receiptData.tax} 
+                  onChange={(e) => handleReceiptChange('tax', e.target.value)} 
+                />
               </div>
               <div className="flex justify-between text-sm py-1 font-bold border-t border-gray-800">
                 <span>TOTAL:</span>
-                <span>$102.52</span>
+                <Input 
+                  className="w-16 text-right font-bold" 
+                  value={receiptData.total} 
+                  onChange={(e) => handleReceiptChange('total', e.target.value)} 
+                />
               </div>
               <div className="flex justify-between text-sm py-1">
                 <span>AMOUNT TENDERED:</span>
-                <span>$120.00</span>
+                <Input 
+                  className="w-16 text-right" 
+                  value={receiptData.amountTendered} 
+                  onChange={(e) => handleReceiptChange('amountTendered', e.target.value)} 
+                />
               </div>
               <div className="flex justify-between text-sm py-1 font-bold">
                 <span>CHANGE:</span>
-                <span>$17.48</span>
+                <Input 
+                  className="w-16 text-right font-bold" 
+                  value={receiptData.change} 
+                  onChange={(e) => handleReceiptChange('change', e.target.value)} 
+                />
               </div>
             </div>
             
             <div className="text-center mb-4">
-              <p className="text-xs">Payment Method: CASH</p>
+              <p className="text-xs">Payment Method: 
+                <Input 
+                  className="inline-block w-20 ml-1" 
+                  value={receiptData.paymentMethod} 
+                  onChange={(e) => handleReceiptChange('paymentMethod', e.target.value)} 
+                />
+              </p>
               <div className="mt-2">
-                <p className="text-xs border-t border-gray-800 pt-2">Transaction ID: TXN-{Math.floor(Math.random() * 1000000)}</p>
+                <p className="text-xs border-t border-gray-800 pt-2">Transaction ID: 
+                  <Input 
+                    className="inline-block w-32 ml-1" 
+                    value={receiptData.transactionId} 
+                    onChange={(e) => handleReceiptChange('transactionId', e.target.value)} 
+                  />
+                </p>
               </div>
             </div>
             
@@ -1412,9 +2501,21 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             </div>
             
             <div className="text-center text-xs">
-              <p>Thank you for your purchase!</p>
-              <p className="mt-1">Items sold are not returnable</p>
-              <p className="mt-1">Exchange within 7 days with receipt</p>
+              <Textarea 
+                className="w-full text-center" 
+                value={receiptData.thankYouMessage} 
+                onChange={(e) => handleReceiptChange('thankYouMessage', e.target.value)} 
+              />
+              <Textarea 
+                className="w-full text-center mt-1" 
+                value={receiptData.returnPolicy} 
+                onChange={(e) => handleReceiptChange('returnPolicy', e.target.value)} 
+              />
+              <Textarea 
+                className="w-full text-center mt-1" 
+                value={receiptData.exchangePolicy} 
+                onChange={(e) => handleReceiptChange('exchangePolicy', e.target.value)} 
+              />
             </div>
           </div>
         );
@@ -1423,77 +2524,246 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
           <div className="p-8 max-w-2xl mx-auto bg-white">
             <div className="text-center mb-8">
               <div className="border-2 border-gray-800 inline-block p-2 mb-4">
-                <h1 className="text-2xl font-bold">OFFICIAL NOTICE</h1>
+                <Input 
+                  className="text-2xl font-bold w-full text-center" 
+                  value={noticeData.noticeTitle} 
+                  onChange={(e) => handleNoticeChange('noticeTitle', e.target.value)} 
+                />
               </div>
-              <p className="text-sm text-gray-600">Document Control Number: NT-{new Date().getFullYear()}-{Math.floor(Math.random() * 10000)}</p>
+              <p className="text-sm text-gray-600">Document Control Number: 
+                <Input 
+                  className="inline-block w-48" 
+                  value={noticeData.documentControlNumber} 
+                  onChange={(e) => handleNoticeChange('documentControlNumber', e.target.value)} 
+                />
+              </p>
             </div>
             
             <div className="text-right mb-8">
-              <p className="font-semibold">Date: {new Date().toLocaleDateString()}</p>
+              <p className="font-semibold">Date: 
+                <Input 
+                  className="inline-block w-32" 
+                  value={noticeData.date} 
+                  onChange={(e) => handleNoticeChange('date', e.target.value)} 
+                />
+              </p>
             </div>
             
             <div className="mb-8">
-              <p className="mb-4">To: <span className="font-semibold">All Employees/Customers/Stakeholders</span></p>
-              <p className="mb-4">From: <span className="font-semibold">Management/Administration</span></p>
-              <p className="mb-4">Subject: <span className="font-semibold underline">Important Notice Regarding Operations</span></p>
+              <p className="mb-4">To: 
+                <Input 
+                  className="font-semibold inline-block w-64" 
+                  value={noticeData.to} 
+                  onChange={(e) => handleNoticeChange('to', e.target.value)} 
+                />
+              </p>
+              <p className="mb-4">From: 
+                <Input 
+                  className="font-semibold inline-block w-64" 
+                  value={noticeData.from} 
+                  onChange={(e) => handleNoticeChange('from', e.target.value)} 
+                />
+              </p>
+              <p className="mb-4">Subject: 
+                <Input 
+                  className="font-semibold underline inline-block w-80" 
+                  value={noticeData.subject} 
+                  onChange={(e) => handleNoticeChange('subject', e.target.value)} 
+                />
+              </p>
             </div>
             
             <div className="mb-8">
               <div className="border-l-4 border-gray-800 pl-4">
-                <p className="mb-4">Dear Recipients,</p>
-                <p className="mb-4">We are writing to inform you of important changes that will affect our operations. Please read this notice carefully as it contains essential information that impacts all stakeholders.</p>
+                <Textarea 
+                  className="w-full mb-4" 
+                  value={noticeData.introduction} 
+                  onChange={(e) => handleNoticeChange('introduction', e.target.value)} 
+                />
                 
                 <h2 className="font-bold text-lg mb-3">Key Information:</h2>
                 <ul className="list-disc pl-6 mb-4 space-y-2">
-                  <li>New operational hours will be effective starting <span className="font-semibold">[Date]</span></li>
-                  <li>Updated security protocols must be followed by all personnel</li>
-                  <li>System maintenance scheduled for <span className="font-semibold">[Date and Time]</span></li>
-                  <li>New contact information for department heads</li>
+                  {noticeData.keyInformation.map((info, index) => (
+                    <li key={index}>
+                      <Input 
+                        className="w-full" 
+                        value={info} 
+                        onChange={(e) => handleNoticeKeyInfoChange(index, e.target.value)} 
+                      />
+                    </li>
+                  ))}
                 </ul>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="mb-4" 
+                  onClick={addNoticeKeyInfoItem}
+                >
+                  Add Key Information Item
+                </Button>
                 
-                <h2 className="font-bold text-lg mb-3">Effective Date:</h2>
-                <p className="mb-4"><span className="font-semibold">[Insert Effective Date]</span></p>
+                <h2 className="font-bold text-lg mb-3">
+                  <Input 
+                    className="font-bold text-lg" 
+                    value={noticeData.effectiveDateLabel} 
+                    onChange={(e) => handleNoticeChange('effectiveDateLabel', e.target.value)} 
+                  />
+                </h2>
+                <p className="mb-4">
+                  <Input 
+                    className="font-semibold" 
+                    value={noticeData.effectiveDate} 
+                    onChange={(e) => handleNoticeChange('effectiveDate', e.target.value)} 
+                  />
+                </p>
                 
-                <h2 className="font-bold text-lg mb-3">Action Required:</h2>
-                <p className="mb-4">All recipients must acknowledge receipt of this notice by signing and returning the attached acknowledgment form by <span className="font-semibold">[Deadline Date]</span>.</p>
+                <h2 className="font-bold text-lg mb-3">
+                  <Input 
+                    className="font-bold text-lg" 
+                    value={noticeData.actionRequiredLabel} 
+                    onChange={(e) => handleNoticeChange('actionRequiredLabel', e.target.value)} 
+                  />
+                </h2>
+                <p className="mb-4">
+                  <Input 
+                    className="w-full" 
+                    value={noticeData.actionRequired} 
+                    onChange={(e) => handleNoticeChange('actionRequired', e.target.value)} 
+                  />
+                </p>
                 
-                <h2 className="font-bold text-lg mb-3">Contact Information:</h2>
-                <p className="mb-4">For questions regarding this notice, please contact:</p>
-                <p className="font-semibold">[Department/Person Name]</p>
-                <p>Phone: [Phone Number]</p>
-                <p>Email: [Email Address]</p>
+                <h2 className="font-bold text-lg mb-3">
+                  <Input 
+                    className="font-bold text-lg" 
+                    value={noticeData.contactLabel} 
+                    onChange={(e) => handleNoticeChange('contactLabel', e.target.value)} 
+                  />
+                </h2>
+                <p className="mb-4">
+                  <Input 
+                    className="w-full" 
+                    value={noticeData.contactInfo} 
+                    onChange={(e) => handleNoticeChange('contactInfo', e.target.value)} 
+                  />
+                </p>
+                <p className="font-semibold">
+                  <Input 
+                    className="w-full" 
+                    value={noticeData.departmentPersonName} 
+                    onChange={(e) => handleNoticeChange('departmentPersonName', e.target.value)} 
+                  />
+                </p>
+                <p>Phone: 
+                  <Input 
+                    className="inline-block w-32" 
+                    value={noticeData.phoneNumber} 
+                    onChange={(e) => handleNoticeChange('phoneNumber', e.target.value)} 
+                  />
+                </p>
+                <p>Email: 
+                  <Input 
+                    className="inline-block w-48" 
+                    value={noticeData.emailAddress} 
+                    onChange={(e) => handleNoticeChange('emailAddress', e.target.value)} 
+                  />
+                </p>
               </div>
             </div>
             
             <div className="mb-8">
               <h2 className="font-bold text-lg mb-3">Additional Information:</h2>
               <div className="border border-gray-300 p-4 rounded">
-                <p>This notice is issued in accordance with company policy and regulatory requirements. Failure to comply with the stated changes may result in disciplinary action or other consequences as outlined in company guidelines.</p>
+                <Textarea 
+                  className="w-full" 
+                  value={noticeData.additionalInformation} 
+                  onChange={(e) => handleNoticeChange('additionalInformation', e.target.value)} 
+                />
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-8 mt-12">
               <div>
-                <p className="font-semibold mb-8">Issued By:</p>
+                <p className="font-semibold mb-8">
+                  <Input 
+                    className="font-semibold" 
+                    value={noticeData.issuedByLabel} 
+                    onChange={(e) => handleNoticeChange('issuedByLabel', e.target.value)} 
+                  />
+                </p>
                 <div className="border-t border-gray-800 pt-2">
-                  <p className="font-semibold">[Authorized Signatory Name]</p>
-                  <p>[Title]</p>
-                  <p>[Company Name]</p>
+                  <p className="font-semibold">
+                    <Input 
+                      className="font-semibold w-full" 
+                      value={noticeData.authorizedSignatoryName} 
+                      onChange={(e) => handleNoticeChange('authorizedSignatoryName', e.target.value)} 
+                    />
+                  </p>
+                  <p>
+                    <Input 
+                      className="w-full" 
+                      value={noticeData.title} 
+                      onChange={(e) => handleNoticeChange('title', e.target.value)} 
+                    />
+                  </p>
+                  <p>
+                    <Input 
+                      className="w-full" 
+                      value={noticeData.companyName} 
+                      onChange={(e) => handleNoticeChange('companyName', e.target.value)} 
+                    />
+                  </p>
                 </div>
               </div>
               <div>
-                <p className="font-semibold mb-8">Acknowledgment:</p>
+                <p className="font-semibold mb-8">
+                  <Input 
+                    className="font-semibold" 
+                    value={noticeData.acknowledgmentLabel} 
+                    onChange={(e) => handleNoticeChange('acknowledgmentLabel', e.target.value)} 
+                  />
+                </p>
                 <div className="border-t border-gray-800 pt-2">
-                  <p className="mb-4">Signature: ________________________</p>
-                  <p className="mb-4">Print Name: _______________________</p>
-                  <p>Date: ____________________________</p>
+                  <p className="mb-4">
+                    <Input 
+                      className="w-full" 
+                      value={noticeData.signatureLine} 
+                      onChange={(e) => handleNoticeChange('signatureLine', e.target.value)} 
+                    />
+                  </p>
+                  <p className="mb-4">
+                    <Input 
+                      className="w-full" 
+                      value={noticeData.printNameLine} 
+                      onChange={(e) => handleNoticeChange('printNameLine', e.target.value)} 
+                    />
+                  </p>
+                  <p>
+                    <Input 
+                      className="w-full" 
+                      value={noticeData.dateLine} 
+                      onChange={(e) => handleNoticeChange('dateLine', e.target.value)} 
+                    />
+                  </p>
                 </div>
               </div>
             </div>
             
             <div className="mt-12 pt-4 border-t border-gray-300 text-center text-sm text-gray-600">
-              <p>This is an official communication. Please retain for your records.</p>
-              <p className="mt-1">Distribution: All Departments | Document Control ID: NT-{new Date().getFullYear()}-{Math.floor(Math.random() * 10000)}</p>
+              <p>
+                <Input 
+                  className="w-full text-center" 
+                  value={noticeData.footerMessage} 
+                  onChange={(e) => handleNoticeChange('footerMessage', e.target.value)} 
+                />
+              </p>
+              <p className="mt-1">
+                <Input 
+                  className="w-full text-center" 
+                  value={noticeData.distributionInfo} 
+                  onChange={(e) => handleNoticeChange('distributionInfo', e.target.value)} 
+                />
+              </p>
             </div>
           </div>
         );
@@ -1502,13 +2772,25 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
           <div className="p-6 max-w-2xl mx-auto bg-white">
             <div className="flex justify-between items-start mb-6 pb-4 border-b-2 border-blue-800">
               <div>
-                <h1 className="text-3xl font-bold text-blue-800">QUOTATION</h1>
-                <p className="text-gray-600 mt-1">Professional Service Proposal</p>
+                <Input 
+                  className="text-3xl font-bold text-blue-800 w-full" 
+                  value={quoteData.quoteTitle} 
+                  onChange={(e) => handleQuoteChange('quoteTitle', e.target.value)} 
+                />
+                <Input 
+                  className="text-gray-600 mt-1 w-full" 
+                  value={quoteData.quoteSubtitle} 
+                  onChange={(e) => handleQuoteChange('quoteSubtitle', e.target.value)} 
+                />
               </div>
               <div className="text-right">
                 <div className="bg-blue-50 border-2 border-blue-800 p-2 rounded">
                   <p className="text-blue-800 font-bold">QUOTE #</p>
-                  <p className="text-xl font-bold">QT-2024-{Math.floor(Math.random() * 10000)}</p>
+                  <Input 
+                    className="text-xl font-bold w-full" 
+                    value={quoteData.quoteNumber} 
+                    onChange={(e) => handleQuoteChange('quoteNumber', e.target.value)} 
+                  />
                 </div>
               </div>
             </div>
@@ -1517,24 +2799,80 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">PREPARED FOR:</h3>
                 <div className="bg-gray-50 p-3 rounded border">
-                  <p className="font-bold">Client Company Name</p>
-                  <p>Client Contact Person</p>
-                  <p>456 Client Avenue</p>
-                  <p>Client City, State 67890</p>
-                  <p>Phone: (555) 987-6543</p>
-                  <p>Email: client@example.com</p>
+                  <Input 
+                    className="font-bold w-full mb-1" 
+                    value={quoteData.preparedFor.company} 
+                    onChange={(e) => handleQuotePreparedForChange('company', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full mb-1" 
+                    value={quoteData.preparedFor.contactPerson} 
+                    onChange={(e) => handleQuotePreparedForChange('contactPerson', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full mb-1" 
+                    value={quoteData.preparedFor.address} 
+                    onChange={(e) => handleQuotePreparedForChange('address', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full mb-1" 
+                    value={quoteData.preparedFor.cityStateZip} 
+                    onChange={(e) => handleQuotePreparedForChange('cityStateZip', e.target.value)} 
+                  />
+                  <p>Phone: 
+                    <Input 
+                      className="inline-block w-32 ml-1" 
+                      value={quoteData.preparedFor.phone} 
+                      onChange={(e) => handleQuotePreparedForChange('phone', e.target.value)} 
+                    />
+                  </p>
+                  <p>Email: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={quoteData.preparedFor.email} 
+                      onChange={(e) => handleQuotePreparedForChange('email', e.target.value)} 
+                    />
+                  </p>
                 </div>
               </div>
               
               <div>
                 <h3 className="font-bold text-gray-800 mb-2">PREPARED BY:</h3>
                 <div className="bg-gray-50 p-3 rounded border">
-                  <p className="font-bold">Your Business Name</p>
-                  <p>Your Contact Person</p>
-                  <p>123 Business Street</p>
-                  <p>Business City, State 12345</p>
-                  <p>Phone: (555) 123-4567</p>
-                  <p>Email: sales@yourbusiness.com</p>
+                  <Input 
+                    className="font-bold w-full mb-1" 
+                    value={quoteData.preparedBy.company} 
+                    onChange={(e) => handleQuotePreparedByChange('company', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full mb-1" 
+                    value={quoteData.preparedBy.contactPerson} 
+                    onChange={(e) => handleQuotePreparedByChange('contactPerson', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full mb-1" 
+                    value={quoteData.preparedBy.address} 
+                    onChange={(e) => handleQuotePreparedByChange('address', e.target.value)} 
+                  />
+                  <Input 
+                    className="w-full mb-1" 
+                    value={quoteData.preparedBy.cityStateZip} 
+                    onChange={(e) => handleQuotePreparedByChange('cityStateZip', e.target.value)} 
+                  />
+                  <p>Phone: 
+                    <Input 
+                      className="inline-block w-32 ml-1" 
+                      value={quoteData.preparedBy.phone} 
+                      onChange={(e) => handleQuotePreparedByChange('phone', e.target.value)} 
+                    />
+                  </p>
+                  <p>Email: 
+                    <Input 
+                      className="inline-block w-48 ml-1" 
+                      value={quoteData.preparedBy.email} 
+                      onChange={(e) => handleQuotePreparedByChange('email', e.target.value)} 
+                    />
+                  </p>
                 </div>
               </div>
             </div>
@@ -1542,15 +2880,27 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             <div className="grid grid-cols-3 gap-4 mb-6 bg-blue-50 p-3 rounded border">
               <div>
                 <p className="text-xs text-gray-600">DATE</p>
-                <p className="font-medium">{new Date().toLocaleDateString()}</p>
+                <Input 
+                  className="font-medium w-full" 
+                  value={quoteData.date} 
+                  onChange={(e) => handleQuoteChange('date', e.target.value)} 
+                />
               </div>
               <div>
                 <p className="text-xs text-gray-600">VALID UNTIL</p>
-                <p className="font-medium">{new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                <Input 
+                  className="font-medium w-full" 
+                  value={quoteData.validUntil} 
+                  onChange={(e) => handleQuoteChange('validUntil', e.target.value)} 
+                />
               </div>
               <div>
                 <p className="text-xs text-gray-600">PREPARED BY</p>
-                <p className="font-medium">Sales Representative</p>
+                <Input 
+                  className="font-medium w-full" 
+                  value={quoteData.preparedByPerson} 
+                  onChange={(e) => handleQuoteChange('preparedByPerson', e.target.value)} 
+                />
               </div>
             </div>
             
@@ -1559,7 +2909,11 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                 <h3 className="font-bold text-lg">PROJECT DESCRIPTION</h3>
               </div>
               <div className="border border-gray-300 p-3 rounded-b">
-                <p>We are pleased to provide you with the following quotation for professional services. This proposal outlines our understanding of your requirements and our recommended solution.</p>
+                <Textarea 
+                  className="w-full" 
+                  value={quoteData.projectDescription} 
+                  onChange={(e) => handleQuoteChange('projectDescription', e.target.value)} 
+                />
               </div>
             </div>
             
@@ -1579,62 +2933,127 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">001</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">Consultation Services</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">10</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">Hours</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$125.00</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$1,250.00</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">002</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">Software License</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">5</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">Licenses</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$299.99</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$1,499.95</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">003</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">Installation & Setup</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">1</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">Project</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$750.00</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$750.00</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">004</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">Training Session</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">3</td>
-                    <td className="border border-gray-300 px-3 py-2 text-center text-sm">Sessions</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$200.00</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right text-sm">$600.00</td>
-                  </tr>
+                  {quoteData.items.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border border-gray-300 px-3 py-2 text-sm">
+                        <Input 
+                          className="w-full" 
+                          value={item.itemNumber} 
+                          onChange={(e) => handleQuoteItemChange(index, 'itemNumber', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-sm">
+                        <Input 
+                          className="w-full" 
+                          value={item.description} 
+                          onChange={(e) => handleQuoteItemChange(index, 'description', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-center text-sm">
+                        <Input 
+                          className="w-full text-center" 
+                          value={item.quantity} 
+                          onChange={(e) => handleQuoteItemChange(index, 'quantity', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-center text-sm">
+                        <Input 
+                          className="w-full text-center" 
+                          value={item.unit} 
+                          onChange={(e) => handleQuoteItemChange(index, 'unit', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-right text-sm">
+                        <Input 
+                          className="w-full text-right" 
+                          value={item.unitPrice} 
+                          onChange={(e) => handleQuoteItemChange(index, 'unitPrice', e.target.value)} 
+                        />
+                      </td>
+                      <td className="border border-gray-300 px-3 py-2 text-right text-sm">
+                        <Input 
+                          className="w-full text-right" 
+                          value={item.total} 
+                          onChange={(e) => handleQuoteItemChange(index, 'total', e.target.value)} 
+                        />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
                 <tfoot>
                   <tr>
                     <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
                     <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">SUBTOTAL</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">$4,099.95</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="w-full text-right font-bold" 
+                        value={quoteData.subtotal} 
+                        onChange={(e) => handleQuoteChange('subtotal', e.target.value)} 
+                      />
+                    </td>
                   </tr>
                   <tr>
                     <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
-                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">DISCOUNT (5%)</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">-$205.00</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="inline-block" 
+                        value={quoteData.discountLabel} 
+                        onChange={(e) => handleQuoteChange('discountLabel', e.target.value)} 
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="w-full text-right font-bold" 
+                        value={quoteData.discountValue} 
+                        onChange={(e) => handleQuoteChange('discountValue', e.target.value)} 
+                      />
+                    </td>
                   </tr>
                   <tr>
                     <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
-                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">TAX (8.25%)</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">$322.12</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="inline-block" 
+                        value={quoteData.taxLabel} 
+                        onChange={(e) => handleQuoteChange('taxLabel', e.target.value)} 
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-sm">
+                      <Input 
+                        className="w-full text-right font-bold" 
+                        value={quoteData.taxValue} 
+                        onChange={(e) => handleQuoteChange('taxValue', e.target.value)} 
+                      />
+                    </td>
                   </tr>
                   <tr className="bg-blue-100">
                     <td colSpan={4} className="border border-gray-300 px-3 py-2 text-sm"></td>
-                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-lg">TOTAL</td>
-                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-lg">$4,217.07</td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-lg">
+                      <Input 
+                        className="inline-block" 
+                        value={quoteData.totalLabel} 
+                        onChange={(e) => handleQuoteChange('totalLabel', e.target.value)} 
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2 text-right font-bold text-lg">
+                      <Input 
+                        className="w-full text-right font-bold" 
+                        value={quoteData.totalValue} 
+                        onChange={(e) => handleQuoteChange('totalValue', e.target.value)} 
+                      />
+                    </td>
                   </tr>
                 </tfoot>
               </table>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                className="mt-2" 
+                onClick={addQuoteItem}
+              >
+                Add Item
+              </Button>
             </div>
             
             <div className="grid grid-cols-2 gap-6 mb-6">
@@ -1642,11 +3061,25 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                 <h3 className="font-bold text-gray-800 mb-2">TERMS & CONDITIONS:</h3>
                 <div className="border border-gray-300 p-3 rounded text-sm">
                   <ul className="list-disc pl-5 space-y-1">
-                    <li>This quote is valid for 30 days</li>
-                    <li>50% deposit required to begin work</li>
-                    <li>Balance due upon completion</li>
-                    <li>Travel expenses not included</li>
+                    {quoteData.termsAndConditions.map((term, index) => (
+                      <li key={index}>
+                        <Input 
+                          className="w-full" 
+                          value={term} 
+                          onChange={(e) => handleQuoteTermsChange(index, e.target.value)} 
+                        />
+                      </li>
+                    ))}
                   </ul>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2" 
+                    onClick={addQuoteTermsItem}
+                  >
+                    Add Term
+                  </Button>
                 </div>
               </div>
               
@@ -1654,9 +3087,25 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                 <h3 className="font-bold text-gray-800 mb-2">PAYMENT SCHEDULE:</h3>
                 <div className="border border-gray-300 p-3 rounded text-sm">
                   <ul className="list-disc pl-5 space-y-1">
-                    <li>Deposit: $2,108.54 (50%)</li>
-                    <li>Final Payment: $2,108.53 (50%)</li>
+                    {quoteData.paymentSchedule.map((schedule, index) => (
+                      <li key={index}>
+                        <Input 
+                          className="w-full" 
+                          value={schedule} 
+                          onChange={(e) => handleQuotePaymentScheduleChange(index, e.target.value)} 
+                        />
+                      </li>
+                    ))}
                   </ul>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2" 
+                    onClick={addQuotePaymentScheduleItem}
+                  >
+                    Add Schedule Item
+                  </Button>
                 </div>
               </div>
             </div>
@@ -1664,24 +3113,75 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
             <div className="mb-6">
               <h3 className="font-bold text-gray-800 mb-2">ACCEPTANCE:</h3>
               <div className="border border-gray-300 p-4 rounded">
-                <p className="mb-4">By signing below, you agree to the terms and conditions outlined in this quotation.</p>
+                <Textarea 
+                  className="w-full mb-4" 
+                  value={quoteData.acceptanceMessage} 
+                  onChange={(e) => handleQuoteChange('acceptanceMessage', e.target.value)} 
+                />
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="mb-2">Signature: _________________________________</p>
-                    <p className="mb-2">Print Name: _______________________________</p>
-                    <p className="mb-2">Title: ____________________________________</p>
+                    <p className="mb-2">
+                      <Input 
+                        className="w-full" 
+                        value={quoteData.signatureLine} 
+                        onChange={(e) => handleQuoteChange('signatureLine', e.target.value)} 
+                      />
+                    </p>
+                    <p className="mb-2">
+                      <Input 
+                        className="w-full" 
+                        value={quoteData.printNameLine} 
+                        onChange={(e) => handleQuoteChange('printNameLine', e.target.value)} 
+                      />
+                    </p>
+                    <p className="mb-2">
+                      <Input 
+                        className="w-full" 
+                        value={quoteData.titleLine} 
+                        onChange={(e) => handleQuoteChange('titleLine', e.target.value)} 
+                      />
+                    </p>
                   </div>
                   <div>
-                    <p className="mb-2">Date: ____________________________________</p>
-                    <p className="mb-2">Company: _________________________________</p>
+                    <p className="mb-2">
+                      <Input 
+                        className="w-full" 
+                        value={quoteData.dateLine} 
+                        onChange={(e) => handleQuoteChange('dateLine', e.target.value)} 
+                      />
+                    </p>
+                    <p className="mb-2">
+                      <Input 
+                        className="w-full" 
+                        value={quoteData.companyLine} 
+                        onChange={(e) => handleQuoteChange('companyLine', e.target.value)} 
+                      />
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="text-center text-sm text-gray-600 mt-8 pt-4 border-t border-gray-300">
-              <p>Thank you for considering our services. We look forward to working with you!</p>
-              <p className="mt-1">Quote prepared by: Sales Department | Valid until: {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+              <p>
+                <Input 
+                  className="w-full text-center" 
+                  value={quoteData.thankYouMessage} 
+                  onChange={(e) => handleQuoteChange('thankYouMessage', e.target.value)} 
+                />
+              </p>
+              <p className="mt-1">Quote prepared by: 
+                <Input 
+                  className="inline-block w-32 ml-1" 
+                  value={quoteData.quotePreparedBy} 
+                  onChange={(e) => handleQuoteChange('quotePreparedBy', e.target.value)} 
+                /> | Valid until: 
+                <Input 
+                  className="inline-block w-32 ml-1" 
+                  value={quoteData.validUntilDate} 
+                  onChange={(e) => handleQuoteChange('validUntilDate', e.target.value)} 
+                />
+              </p>
             </div>
           </div>
         );
@@ -1689,60 +3189,139 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
         return (
           <div className="p-8 max-w-4xl mx-auto bg-white">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-800">MONTHLY BUSINESS REPORT</h1>
-              <p className="text-lg mt-2">Reporting Period: {new Date().toLocaleDateString()} - {new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString()}</p>
-              <p className="text-gray-600 mt-1">Prepared by: Management Team</p>
+              <Input 
+                className="text-3xl font-bold text-gray-800 w-full text-center" 
+                value={reportData.reportTitle} 
+                onChange={(e) => handleReportChange('reportTitle', e.target.value)} 
+              />
+              <p className="text-lg mt-2">Reporting Period: 
+                <Input 
+                  className="inline-block w-64" 
+                  value={reportData.reportingPeriod} 
+                  onChange={(e) => handleReportChange('reportingPeriod', e.target.value)} 
+                />
+              </p>
+              <p className="text-gray-600 mt-1">Prepared by: 
+                <Input 
+                  className="inline-block w-48" 
+                  value={reportData.preparedBy} 
+                  onChange={(e) => handleReportChange('preparedBy', e.target.value)} 
+                />
+              </p>
             </div>
             
             <div className="grid grid-cols-4 gap-4 mb-8">
-              <div className="bg-blue-50 border border-blue-200 rounded p-4 text-center">
-                <p className="text-2xl font-bold text-blue-800">$42,580</p>
-                <p className="text-sm text-gray-600">Total Revenue</p>
-              </div>
-              <div className="bg-green-50 border border-green-200 rounded p-4 text-center">
-                <p className="text-2xl font-bold text-green-800">$28,930</p>
-                <p className="text-sm text-gray-600">Net Profit</p>
-              </div>
-              <div className="bg-yellow-50 border border-yellow-200 rounded p-4 text-center">
-                <p className="text-2xl font-bold text-yellow-800">$12,450</p>
-                <p className="text-sm text-gray-600">Expenses</p>
-              </div>
-              <div className="bg-red-50 border border-red-200 rounded p-4 text-center">
-                <p className="text-2xl font-bold text-red-800">-3.4%</p>
-                <p className="text-sm text-gray-600">Profit Margin</p>
-              </div>
+              {reportData.metrics.map((metric, index) => (
+                <div key={index} className={`bg-${metric.color}-50 border border-${metric.color}-200 rounded p-4 text-center`}>
+                  <Input 
+                    className={`text-2xl font-bold text-${metric.color}-800 w-full text-center`} 
+                    value={metric.value} 
+                    onChange={(e) => handleReportMetricChange(index, 'value', e.target.value)} 
+                  />
+                  <Input 
+                    className="text-sm text-gray-600 w-full text-center" 
+                    value={metric.label} 
+                    onChange={(e) => handleReportMetricChange(index, 'label', e.target.value)} 
+                  />
+                </div>
+              ))}
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                onClick={addReportMetric}
+              >
+                Add Metric
+              </Button>
             </div>
             
             <div className="mb-8">
               <div className="bg-gray-50 border border-gray-200 rounded p-4">
-                <p className="text-lg font-bold mb-2">Key Performance Indicators (KPIs)</p>
-                <ol className="list-disc pl-6">
-                  <li>Sales growth: 5.6%</li>
-                  <li>Customer satisfaction: 92%</li>
-                  <li>Employee turnover: 8%</li>
+                <Input 
+                  className="text-lg font-bold mb-2 w-full" 
+                  value={reportData.kpiTitle} 
+                  onChange={(e) => handleReportChange('kpiTitle', e.target.value)} 
+                />
+                <ol className="list-decimal pl-6">
+                  {reportData.kpis.map((kpi, index) => (
+                    <li key={index} className="mb-1">
+                      <Input 
+                        className="w-full" 
+                        value={kpi} 
+                        onChange={(e) => handleReportKpiChange(index, e.target.value)} 
+                      />
+                    </li>
+                  ))}
                 </ol>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2" 
+                  onClick={addReportKpi}
+                >
+                  Add KPI
+                </Button>
               </div>
             </div>
             
             <div className="mb-8">
               <div className="bg-gray-50 border border-gray-200 rounded p-4">
-                <p className="text-lg font-bold mb-2">Operational Highlights</p>
+                <Input 
+                  className="text-lg font-bold mb-2 w-full" 
+                  value={reportData.operationalHighlightsTitle} 
+                  onChange={(e) => handleReportChange('operationalHighlightsTitle', e.target.value)} 
+                />
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Completed 12 major projects</li>
-                  <li>Launched new product line</li>
-                  <li>Expanded market reach by 15%</li>
+                  {reportData.operationalHighlights.map((highlight, index) => (
+                    <li key={index}>
+                      <Input 
+                        className="w-full" 
+                        value={highlight} 
+                        onChange={(e) => handleReportOperationalHighlightChange(index, e.target.value)} 
+                      />
+                    </li>
+                  ))}
                 </ul>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2" 
+                  onClick={addReportOperationalHighlight}
+                >
+                  Add Highlight
+                </Button>
               </div>
             </div>
             
             <div className="mb-8">
               <div className="bg-gray-50 border border-gray-200 rounded p-4">
-                <p className="text-lg font-bold mb-2">Strategic Initiatives</p>
-                <ol className="list-disc pl-6">
-                  <li>Increase marketing budget allocation to digital channels by 15%</li>
-                  <li>Invest in additional warehouse capacity to meet growing demand</li>
-                  <li>Enhance staff training programs to improve service quality</li>
+                <Input 
+                  className="text-lg font-bold mb-2 w-full" 
+                  value={reportData.strategicInitiativesTitle} 
+                  onChange={(e) => handleReportChange('strategicInitiativesTitle', e.target.value)} 
+                />
+                <ol className="list-decimal pl-6">
+                  {reportData.strategicInitiatives.map((initiative, index) => (
+                    <li key={index} className="mb-1">
+                      <Input 
+                        className="w-full" 
+                        value={initiative} 
+                        onChange={(e) => handleReportStrategicInitiativeChange(index, e.target.value)} 
+                      />
+                    </li>
+                  ))}
                 </ol>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2" 
+                  onClick={addReportStrategicInitiative}
+                >
+                  Add Initiative
+                </Button>
               </div>
             </div>
           </div>
@@ -1775,61 +3354,52 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Business Templates</h1>
-          <p className="text-gray-600">Generate and print professional business templates</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {templates.map((template) => {
-            const IconComponent = template.icon;
-            return (
-              <Card 
-                key={template.id} 
-                className="flex flex-col h-full hover:shadow-lg transition-shadow"
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <IconComponent className="h-8 w-8 text-blue-600" />
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePreviewTemplate(template.id);
-                        }}
+          <p className="text-gray-600 mb-6">Professional templates for your business documents</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {templates.map((template) => {
+              const Icon = template.icon;
+              return (
+                <Card key={template.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Icon className="h-5 w-5" />
+                      {template.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 text-sm mb-4">{template.description}</p>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handlePreviewTemplate(template.id)}
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-4 w-4 mr-1" />
+                        Preview
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePrintTemplate(template.id);
-                        }}
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handlePrintTemplate(template.id)}
                       >
-                        <Printer className="h-4 w-4" />
+                        <Printer className="h-4 w-4 mr-1" />
+                        Print
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDownloadTemplate(template.id);
-                        }}
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleDownloadTemplate(template.id)}
                       >
-                        <Download className="h-4 w-4" />
+                        <Download className="h-4 w-4 mr-1" />
+                        Download
                       </Button>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <CardTitle className="text-lg mb-2">{template.name}</CardTitle>
-                  <p className="text-gray-600 text-sm">{template.description}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </div>
       
@@ -1837,22 +3407,11 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {templates.find(t => t.id === selectedTemplate)?.name} Preview
+              {selectedTemplate && templates.find(t => t.id === selectedTemplate)?.name} Preview
             </DialogTitle>
           </DialogHeader>
-          <div className="mt-4">
+          <div>
             {selectedTemplate && getTemplateContent(selectedTemplate)}
-          </div>
-          <div className="mt-6 flex justify-end space-x-3">
-            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>
-              Close
-            </Button>
-            <Button onClick={() => {
-              if (selectedTemplate) handlePrintTemplate(selectedTemplate);
-            }}>
-              <Printer className="h-4 w-4 mr-2" />
-              Print
-            </Button>
           </div>
         </DialogContent>
       </Dialog>
