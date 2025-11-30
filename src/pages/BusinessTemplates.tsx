@@ -290,6 +290,35 @@ interface ReportData {
   strategicInitiatives: string[];
 }
 
+interface SalarySlipData {
+  companyName: string;
+  companyAddress: string;
+  payslipTitle: string;
+  employeeName: string;
+  employeeId: string;
+  department: string;
+  designation: string;
+  payPeriod: string;
+  payDate: string;
+  earnings: Array<{
+    description: string;
+    amount: string;
+  }>;
+  deductions: Array<{
+    description: string;
+    amount: string;
+  }>;
+  grossEarnings: string;
+  totalDeductions: string;
+  netPay: string;
+  bankName: string;
+  accountNumber: string;
+  ifscCode: string;
+  paymentMode: string;
+  preparedBy: string;
+  authorizedSignatory: string;
+}
+
 export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTemplatesProps) => {
   const { toast } = useToast();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -585,6 +614,40 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
       "Invest in additional warehouse capacity to meet growing demand",
       "Enhance staff training programs to improve service quality"
     ]
+  });
+
+  // Form data state for salary slip template
+  const [salarySlipData, setSalarySlipData] = useState<SalarySlipData>({
+    companyName: "YOUR COMPANY NAME",
+    companyAddress: "123 Company Street, City, State 12345",
+    payslipTitle: "SALARY SLIP",
+    employeeName: "John Doe",
+    employeeId: "EMP001",
+    department: "IT Department",
+    designation: "Software Engineer",
+    payPeriod: "January 2024",
+    payDate: new Date().toLocaleDateString(),
+    earnings: [
+      { description: "Basic Salary", amount: "$4,000.00" },
+      { description: "House Rent Allowance", amount: "$1,500.00" },
+      { description: "Transport Allowance", amount: "$300.00" },
+      { description: "Medical Allowance", amount: "$200.00" },
+      { description: "Performance Bonus", amount: "$500.00" }
+    ],
+    deductions: [
+      { description: "Provident Fund", amount: "$400.00" },
+      { description: "Professional Tax", amount: "$50.00" },
+      { description: "Income Tax", amount: "$300.00" }
+    ],
+    grossEarnings: "$6,500.00",
+    totalDeductions: "$750.00",
+    netPay: "$5,750.00",
+    bankName: "ABC Bank",
+    accountNumber: "1234567890",
+    ifscCode: "ABC123456",
+    paymentMode: "Bank Transfer",
+    preparedBy: "HR Department",
+    authorizedSignatory: "Managing Director"
   });
 
   // Handle invoice form changes
@@ -1007,6 +1070,63 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
     });
   };
 
+  // Handle salary slip form changes
+  const handleSalarySlipChange = <K extends keyof SalarySlipData>(field: K, value: SalarySlipData[K]) => {
+    setSalarySlipData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle salary slip earnings changes
+  const handleSalarySlipEarningsChange = (index: number, field: string, value: string) => {
+    setSalarySlipData(prev => {
+      const newEarnings = [...prev.earnings];
+      newEarnings[index] = { ...newEarnings[index], [field]: value };
+      return { ...prev, earnings: newEarnings };
+    });
+  };
+
+  // Add salary slip earnings item
+  const addSalarySlipEarningsItem = () => {
+    setSalarySlipData(prev => ({
+      ...prev,
+      earnings: [...prev.earnings, { description: "", amount: "" }]
+    }));
+  };
+
+  // Remove salary slip earnings item
+  const removeSalarySlipEarningsItem = (index: number) => {
+    setSalarySlipData(prev => {
+      const newEarnings = [...prev.earnings];
+      newEarnings.splice(index, 1);
+      return { ...prev, earnings: newEarnings };
+    });
+  };
+
+  // Handle salary slip deductions changes
+  const handleSalarySlipDeductionsChange = (index: number, field: string, value: string) => {
+    setSalarySlipData(prev => {
+      const newDeductions = [...prev.deductions];
+      newDeductions[index] = { ...newDeductions[index], [field]: value };
+      return { ...prev, deductions: newDeductions };
+    });
+  };
+
+  // Add salary slip deductions item
+  const addSalarySlipDeductionsItem = () => {
+    setSalarySlipData(prev => ({
+      ...prev,
+      deductions: [...prev.deductions, { description: "", amount: "" }]
+    }));
+  };
+
+  // Remove salary slip deductions item
+  const removeSalarySlipDeductionsItem = (index: number) => {
+    setSalarySlipData(prev => {
+      const newDeductions = [...prev.deductions];
+      newDeductions.splice(index, 1);
+      return { ...prev, deductions: newDeductions };
+    });
+  };
+
   const templates: Template[] = [
     {
       id: "delivery",
@@ -1055,6 +1175,12 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
       name: "Report Template",
       description: "Business report template for documentation",
       icon: FileText
+    },
+    {
+      id: "salary",
+      name: "Salary Slip",
+      description: "Employee salary slip template",
+      icon: FileSpreadsheet
     }
   ];
 
@@ -3323,6 +3449,262 @@ export const BusinessTemplates = ({ username, onBack, onLogout }: BusinessTempla
                   Add Initiative
                 </Button>
               </div>
+            </div>
+          </div>
+        );
+      case "salary":
+        return (
+          <div className="p-6 max-w-2xl mx-auto bg-white">
+            <div className="text-center mb-6 border-b-2 border-gray-800 pb-4">
+              <Input 
+                className="text-3xl font-bold text-gray-800 w-full text-center" 
+                value={salarySlipData.payslipTitle} 
+                onChange={(e) => handleSalarySlipChange('payslipTitle', e.target.value)} 
+              />
+              <div className="mt-2 text-sm">
+                <Input 
+                  className="font-semibold text-gray-700 w-full text-center" 
+                  value={salarySlipData.companyName} 
+                  onChange={(e) => handleSalarySlipChange('companyName', e.target.value)} 
+                />
+                <Input 
+                  className="text-gray-600 w-full text-center" 
+                  value={salarySlipData.companyAddress} 
+                  onChange={(e) => handleSalarySlipChange('companyAddress', e.target.value)} 
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">Employee Details:</h3>
+                <div className="space-y-1 text-sm">
+                  <p>Name: 
+                    <Input 
+                      className="inline-block w-48 ml-2" 
+                      value={salarySlipData.employeeName} 
+                      onChange={(e) => handleSalarySlipChange('employeeName', e.target.value)} 
+                    />
+                  </p>
+                  <p>Employee ID: 
+                    <Input 
+                      className="inline-block w-32 ml-2" 
+                      value={salarySlipData.employeeId} 
+                      onChange={(e) => handleSalarySlipChange('employeeId', e.target.value)} 
+                    />
+                  </p>
+                  <p>Department: 
+                    <Input 
+                      className="inline-block w-40 ml-2" 
+                      value={salarySlipData.department} 
+                      onChange={(e) => handleSalarySlipChange('department', e.target.value)} 
+                    />
+                  </p>
+                  <p>Designation: 
+                    <Input 
+                      className="inline-block w-40 ml-2" 
+                      value={salarySlipData.designation} 
+                      onChange={(e) => handleSalarySlipChange('designation', e.target.value)} 
+                    />
+                  </p>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">Pay Period:</h3>
+                <div className="space-y-1 text-sm">
+                  <p>Pay Period: 
+                    <Input 
+                      className="inline-block w-40 ml-2" 
+                      value={salarySlipData.payPeriod} 
+                      onChange={(e) => handleSalarySlipChange('payPeriod', e.target.value)} 
+                    />
+                  </p>
+                  <p>Pay Date: 
+                    <Input 
+                      className="inline-block w-40 ml-2" 
+                      value={salarySlipData.payDate} 
+                      onChange={(e) => handleSalarySlipChange('payDate', e.target.value)} 
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">Earnings:</h3>
+                <div className="border border-gray-300 rounded p-3">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left pb-1">Description</th>
+                        <th className="text-right pb-1">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {salarySlipData.earnings.map((earning, index) => (
+                        <tr key={index}>
+                          <td className="py-1">
+                            <Input 
+                              className="w-full" 
+                              value={earning.description} 
+                              onChange={(e) => handleSalarySlipEarningsChange(index, 'description', e.target.value)} 
+                            />
+                          </td>
+                          <td className="py-1 text-right">
+                            <Input 
+                              className="w-24 text-right" 
+                              value={earning.amount} 
+                              onChange={(e) => handleSalarySlipEarningsChange(index, 'amount', e.target.value)} 
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2" 
+                    onClick={addSalarySlipEarningsItem}
+                  >
+                    Add Earning
+                  </Button>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">Deductions:</h3>
+                <div className="border border-gray-300 rounded p-3">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left pb-1">Description</th>
+                        <th className="text-right pb-1">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {salarySlipData.deductions.map((deduction, index) => (
+                        <tr key={index}>
+                          <td className="py-1">
+                            <Input 
+                              className="w-full" 
+                              value={deduction.description} 
+                              onChange={(e) => handleSalarySlipDeductionsChange(index, 'description', e.target.value)} 
+                            />
+                          </td>
+                          <td className="py-1 text-right">
+                            <Input 
+                              className="w-24 text-right" 
+                              value={deduction.amount} 
+                              onChange={(e) => handleSalarySlipDeductionsChange(index, 'amount', e.target.value)} 
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2" 
+                    onClick={addSalarySlipDeductionsItem}
+                  >
+                    Add Deduction
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4 mb-6 bg-gray-50 p-3 rounded border">
+              <div className="text-center">
+                <p className="text-xs text-gray-600">GROSS EARNINGS</p>
+                <Input 
+                  className="font-medium text-center" 
+                  value={salarySlipData.grossEarnings} 
+                  onChange={(e) => handleSalarySlipChange('grossEarnings', e.target.value)} 
+                />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-600">TOTAL DEDUCTIONS</p>
+                <Input 
+                  className="font-medium text-center" 
+                  value={salarySlipData.totalDeductions} 
+                  onChange={(e) => handleSalarySlipChange('totalDeductions', e.target.value)} 
+                />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-600">NET PAY</p>
+                <Input 
+                  className="font-bold text-center text-green-700" 
+                  value={salarySlipData.netPay} 
+                  onChange={(e) => handleSalarySlipChange('netPay', e.target.value)} 
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">Bank Details:</h3>
+                <div className="space-y-1 text-sm">
+                  <p>Bank Name: 
+                    <Input 
+                      className="inline-block w-40 ml-2" 
+                      value={salarySlipData.bankName} 
+                      onChange={(e) => handleSalarySlipChange('bankName', e.target.value)} 
+                    />
+                  </p>
+                  <p>Account Number: 
+                    <Input 
+                      className="inline-block w-40 ml-2" 
+                      value={salarySlipData.accountNumber} 
+                      onChange={(e) => handleSalarySlipChange('accountNumber', e.target.value)} 
+                    />
+                  </p>
+                  <p>IFSC Code: 
+                    <Input 
+                      className="inline-block w-32 ml-2" 
+                      value={salarySlipData.ifscCode} 
+                      onChange={(e) => handleSalarySlipChange('ifscCode', e.target.value)} 
+                    />
+                  </p>
+                  <p>Payment Mode: 
+                    <Input 
+                      className="inline-block w-32 ml-2" 
+                      value={salarySlipData.paymentMode} 
+                      onChange={(e) => handleSalarySlipChange('paymentMode', e.target.value)} 
+                    />
+                  </p>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">Signatures:</h3>
+                <div className="space-y-1 text-sm">
+                  <p>Prepared By: 
+                    <Input 
+                      className="inline-block w-32 ml-2" 
+                      value={salarySlipData.preparedBy} 
+                      onChange={(e) => handleSalarySlipChange('preparedBy', e.target.value)} 
+                    />
+                  </p>
+                  <p>Authorized Signatory: 
+                    <Input 
+                      className="inline-block w-32 ml-2" 
+                      value={salarySlipData.authorizedSignatory} 
+                      onChange={(e) => handleSalarySlipChange('authorizedSignatory', e.target.value)} 
+                    />
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-8 pt-4 border-t border-gray-300 text-center text-xs text-gray-500">
+              <p>This is a computer-generated document and does not require a signature.</p>
+              <p className="mt-1">For any queries regarding this payslip, please contact the HR department.</p>
             </div>
           </div>
         );
